@@ -1,0 +1,29 @@
+/**
+ * All of the CSS for your public-facing functionality should be
+ * included in this file.
+ */
+
+
+
+ .programguide{
+    max-width: var(--responsive--aligndefault-width);
+    margin-left: auto;
+    margin-right: auto;
+ }
+
+ .programguide span.load, .onairnow span.load {
+    display:none;
+ }
+
+
+ .programguide.loading span.load, .onairnow.loading span.load{
+    display:flex;
+}
+
+ .programguide .program-slot{
+     display:flex;
+ }
+
+ .programguide div{
+    margin-right:1em;
+}
