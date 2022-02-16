@@ -150,12 +150,20 @@ class Acw_Radio_Public
         }
 
 
+        $weekDaysMobile = "";
+
+        for ($i=0; $i < 7; $i++) { 
+
+            $weekDaysMobile = $weekDaysMobile . "<div class='grid-weekday-mobile'><h3 class='mobile-weekday-header'>".$weekdays[$i]."</h3><div class='weekday-container mobile_weekday_$i'> </div></div>";
+        }
+
+
         $var = "<div class='programguide loading'><span class='load'>Loading Program Guide</span>
             <div class='desktop-program-grid'>
             ".$time_divs."
             ".$weekDays."
             </div>
-            <div class='mobile-program-grid'></div>
+            <div id='mobile-program-grid' class='mobile-program-grid'>$weekDaysMobile</div>
         </div>";
         return $var;
     }

@@ -225,10 +225,22 @@
   }
 }
 .programguide .desktop-program-grid .program_slot.onair {
-  background-color: #bcbcff;
+  background-color: #eeeeee;
 }
 .programguide .desktop-program-grid .program_slot:hover {
   background-color: #eeeeee;
+}
+
+.mobile-program-grid .program_slot_mobile {
+  margin-bottom: 20px;
+  text-decoration: none;
+  display: block;
+}
+.mobile-program-grid .program_slot_mobile .mobile-program-name {
+  font-weight: 700;
+}
+.mobile-program-grid .program_slot_mobile .mobile-presenter {
+  font-size: 0.8em;
 }
 
 .programguide span.load,

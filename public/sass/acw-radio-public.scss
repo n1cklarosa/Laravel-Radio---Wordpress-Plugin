@@ -5,10 +5,7 @@
 
 $halfhourheight: 32px !default;
 
-.programguide {
-  // max-width: var(--responsive--aligndefault-width);
-  // margin-left: auto;
-  // margin-right: auto;
+.programguide { 
   max-width: 100% !important;
   .desktop-program-grid {
     background-color: white;
@@ -88,7 +85,7 @@ $halfhourheight: 32px !default;
         font-size: 16px;
       }
       &.onair {
-        background-color: #bcbcff;
+        background-color: #eeeeee;
         // color:white;
       }
       &:hover{
@@ -102,6 +99,17 @@ $halfhourheight: 32px !default;
   //   @media screen and (min-width: 992px) {
   //     display: none;
   //   }
+  .program_slot_mobile{
+      margin-bottom:20px;
+      text-decoration:none;
+      display:block;
+      .mobile-program-name{
+          font-weight:700;
+      }
+      .mobile-presenter{
+          font-size:0.8em;
+      }
+  }
 }
 
 .programguide span.load,
