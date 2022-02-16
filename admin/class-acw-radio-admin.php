@@ -206,7 +206,7 @@ class Acw_Radio_Admin
             die();
         }
         $settings = get_option('acw_plugin_options');
-        $response = wp_remote_get('http://localhost:8000/api/public/station/'.$settings['api_key']);
+        $response = wp_remote_get('https://app.myradio.click/api/public/station/'.$settings['api_key']);
         $decoded = json_decode($response['body']);
         $progams = $decoded->data->programs;
         $finished = [];

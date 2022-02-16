@@ -97,7 +97,7 @@ class Acw_Radio_Public
          * class.
          */
         $settings = get_option('acw_plugin_options');
- 
+        $settings['offset'] = 6;
         wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-public.js', array( 'jquery' ), $this->version, true);
         $dataToBePassed = $settings;
         wp_localize_script($this->plugin_name, 'station_vars', $dataToBePassed);
@@ -113,8 +113,50 @@ class Acw_Radio_Public
                 'arg2'   => 'arg2',
             ),
             $atts
-        ); 
-        $var = "<div class='programguide loading'><span class='load'>Loading Program Guide</span></div>"; 
+        );
+        $offset = 6;
+        $weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+
+        $time_divs = "<div class='time-slots'> <div class='height_60'></div>";
+
+        for ($i=0; $i < 24; $i++) {
+            $altered = $i - $offset;
+            if($altered < 0)
+                $altered = $altered + 24;
+
+            $pm = $altered >= 12 ? "am" : "pm";
+            // $pm = $altered >= 12 ? "pm" : "am";
+            $newTime = $altered >= 12 ? $altered - 12 : $altered;
+            if($newTime == 0)
+                $newTime = 12;
+            $time_divs = $time_divs . "<div class='time_slot height_60 hour_$i'>$newTime$pm</div>";
+            
+        }
+
+        $time_divs = $time_divs . "</div>";
+
+        $weekDays = "";
+
+        for ($i=0; $i < 7; $i++) {
+            $slot_divs = "<div class='slot-slots'>";
+            for ($j=0; $j < 24; $j++) {
+                $slot_divs = $slot_divs . "<div class='slot_slot height_30 ${i}_hour_".$j."_0'></div>";
+                $slot_divs = $slot_divs . "<div class='slot_slot height_30 ${i}_hour_".$j."_30'> </div>";
+            }
+            $slot_divs = $slot_divs . "</div>";
+
+            $weekDays = $weekDays . "<div class='grid-weekday'><div class='weekday-heading height_60'>".$weekdays[$i]."</div><div class='weekday-container weekday_$i'>$slot_divs</div></div>";
+        }
+
+
+        $var = "<div class='programguide loading'><span class='load'>Loading Program Guide</span>
+            <div class='desktop-program-grid'>
+            ".$time_divs."
+            ".$weekDays."
+            </div>
+            <div class='mobile-program-grid'></div>
+        </div>";
         return $var;
     }
 }

@@ -15,7 +15,7 @@ const weekDays = [
   "use strict";
   let guides = document.getElementsByClassName("programguide");
   let onairs = document.getElementsByClassName("onairnow");
-  console.log(onairs);
+  console.log(station_vars);
   /**
    * All of the code for your public-facing JavaScript source
    * should reside in this file.
@@ -44,35 +44,77 @@ const weekDays = [
    * practising this, we should strive to set a better example in our own work.
    */
 
+  const sortOutOffset = (thisSlot) => {
+    let newSlot = { ...thisSlot };
+    let weekday = thisSlot.weekday_start;
+    let start = thisSlot.hour_start;
+    start = start - parseInt(station_vars.offset);
+    if (start > 23) {
+      start = start - 24;
+      weekday++;
+    }
+    if (start < 0) {
+      start = start + 24;
+      weekday--;
+    }
+    if (weekday > 6) {
+      weekday = 0;
+    }
+    if (weekday < 0) {
+      weekday = 6;
+    }
+
+    return { ...thisSlot, hour_start: start, weekday_start: weekday };
+  };
+
   const getOnAir = async () => {
     const response = await fetch(
-      `http://127.0.0.1:8000/api/public/station/${station_vars.api_key}/onair`
+      `https://app.myradio.click/api/public/station/${station_vars.api_key}/onair`
     );
     const results = await response.json();
     console.log("on air", results);
 
-	for (let index = 0; index < onairs.length; index++) {
-		const element = onairs[index];
-		let newTitle = document.createElement("h4");
-		newTitle.append(`${results.data.slot.program.name}`);
-		element.append(newTitle);
-		element.classList.remove("loading");
-	}
-
+    for (let index = 0; index < onairs.length; index++) {
+      const element = onairs[index];
+      let newTitle = document.createElement("h4");
+      newTitle.append(`${results.data.slot.program.name}`);
+      element.append(newTitle);
+      element.classList.remove("loading");
+    }
   };
 
   const getGuide = async () => {
     const response = await fetch(
-      `http://127.0.0.1:8000/api/public/station/${station_vars.api_key}`
+      `https://app.myradio.click/api/public/station/${station_vars.api_key}/guide`
     );
     const results = await response.json();
+    let tmp;
+
+    let onAir = results.data.onair.slot;
+
+    results.data.guide.forEach((slot) => {
+      tmp = sortOutOffset(slot);
+
+      $(
+        `.${tmp.weekday_start}_hour_${tmp.hour_start}_${slot.minute_start}`
+      ).append(
+        `<a href="/program/${slot.program.slug}" class="program_slot height_${
+          slot.duration / 60
+        } ${slot.id === onAir.id && "onair"}"><div>${slot.program.name} ${
+          slot.program.presenter_string &&
+          `<br /><span class='grid-presenter'>${slot.program.presenter_string}</span>`
+        }</div></a>`
+      );
+    });
     let days = [];
     for (let index = 0; index < 7; index++) {
-      days[index] = results.data.slots.filter(
+      days[index] = results.data.guide.filter(
         (item) => item.weekday_start === index
       );
     }
-    const parent = document.getElementsByClassName("programguide");
+
+    const parent = document.getElementsByClassName("mobile-program-grid");
+
     for (let index = 0; index < 7; index++) {
       if (days[index].length > 0) {
         let child = document.createElement("div");
@@ -90,7 +132,7 @@ const weekDays = [
         parent[0].appendChild(child);
       }
     }
-    parent[0].classList.remove("loading");
+    $(".programguide").removeClass("loading");
   };
 
   if (station_vars) {

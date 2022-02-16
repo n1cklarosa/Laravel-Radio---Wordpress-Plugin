@@ -1,0 +1,123 @@
+/**
+ * All of the CSS for your public-facing functionality should be
+ * included in this file.
+ */
+
+$halfhourheight: 32px !default;
+
+.programguide {
+  // max-width: var(--responsive--aligndefault-width);
+  // margin-left: auto;
+  // margin-right: auto;
+  max-width: 100% !important;
+  .desktop-program-grid {
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    // gap: 4px;
+    align-items: stretch;
+    @media screen and (max-width: 992px) {
+      display: none;
+    }
+    .grid-weekday {
+      flex: 1;
+      .weekday-container {
+      }
+    }
+    .time-slot {
+    }
+
+    .time-slots {
+      min-width: 60px;
+    }
+    .weekday-heading {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .time_slot {
+      padding: 0 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .height_30 {
+      height: 30px;
+      position: relative;
+      &.slot_slot {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #eeeeee;
+      }
+    }
+    .height_60 {
+      height: 60px;
+    }
+    @for $i from 0 through 48 {
+      .height_#{$i * 30} {
+        height: (($i * $halfhourheight));
+      }
+    }
+    .program_slot {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      background-color: white;
+      border-left: 1px solid #f4f4f4;
+      border-right: 1px solid #f4f4f4;
+      border-top: 2px solid #f4f4f4;
+      border-bottom: 2px solid #f4f4f4;
+      z-index: 1;
+      padding: 10px;
+      align-items: center;
+      justify-content: center;
+      display: flex;
+      text-decoration: none;
+      text-align: center;
+      font-size: 12px;
+      .grid-presenter {
+        font-size: 10px;
+      }
+      @media screen and (min-width: 1200px) {
+        font-size: 16px;
+      }
+      &.onair {
+        background-color: #bcbcff;
+        // color:white;
+      }
+      &:hover{
+          background-color:#eeeeee;
+      }
+    }
+  }
+}
+
+.mobile-program-grid {
+  //   @media screen and (min-width: 992px) {
+  //     display: none;
+  //   }
+}
+
+.programguide span.load,
+.onairnow span.load {
+  display: none;
+}
+
+.programguide.loading span.load,
+.onairnow.loading span.load {
+  display: flex;
+}
+
+.programguide .program-slot {
+  display: flex;
+}
+
+.programguide .program-slot div {
+  margin-right: 1em;
+}
