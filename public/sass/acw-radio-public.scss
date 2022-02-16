@@ -5,7 +5,7 @@
 
 $halfhourheight: 32px !default;
 
-.programguide { 
+.programguide {
   max-width: 100% !important;
   .desktop-program-grid {
     background-color: white;
@@ -88,27 +88,35 @@ $halfhourheight: 32px !default;
         background-color: #eeeeee;
         // color:white;
       }
-      &:hover{
-          background-color:#eeeeee;
+      &:hover {
+        background-color: #eeeeee;
       }
+    }
+  }
+  &.loading {
+    .mobile-program-grid {
+      display: none;
+    }
+    .desktop-program-grid {
+      display: none;
     }
   }
 }
 
 .mobile-program-grid {
-  //   @media screen and (min-width: 992px) {
-  //     display: none;
-  //   }
-  .program_slot_mobile{
-      margin-bottom:20px;
-      text-decoration:none;
-      display:block;
-      .mobile-program-name{
-          font-weight:700;
-      }
-      .mobile-presenter{
-          font-size:0.8em;
-      }
+  @media screen and (min-width: 992px) {
+    display: none;
+  }
+  .program_slot_mobile {
+    margin-bottom: 20px;
+    text-decoration: none;
+    display: block;
+    .mobile-program-name {
+      font-weight: 700;
+    }
+    .mobile-presenter {
+      font-size: 0.8em;
+    }
   }
 }
 
@@ -128,4 +136,84 @@ $halfhourheight: 32px !default;
 
 .programguide .program-slot div {
   margin-right: 1em;
+}
+
+#program-list {
+  max-width: 100% !important;
+  width: 1400px !important;
+  .program-list-wrapper {
+    width: 100%;
+    display: block;
+    @media screen and (min-width: 1048px) {
+      display: flex;
+    }
+  }
+  .days-list { 
+    flex: 0 0 12em;
+    ul {
+      list-style-type: none;
+      padding: 0;
+      button {
+      //   padding-left:0;
+      //   padding-right:0;
+        background-color:transparent;
+        color:black;
+        font-weight:400;
+        border:1px solid transparent;
+        border-radius:4px;
+        &.active{
+          font-weight:700;
+          border:1px solid black;
+          border-radius:4px;
+        }
+      }
+    }
+  }
+  .program-list-programs {
+    flex: 1;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .program-item-wrapper {
+    padding: 30px 0;
+    border-bottom:1px solid black;
+    &:last-of-type{
+      border-bottom:0px solid black; 
+    }
+    display: block;
+    @media screen and (min-width: 768px) {
+      display: flex;
+    }
+    .program-time {
+      flex: 0 0 6em;
+    }
+    .program-presenter {
+      flex: 0 0 10em;
+      span{
+        font-size:12px;
+      }
+    }
+    .program-details {
+      flex-grow: 1;
+      h4{
+        font-weight:700; 
+        margin-top:0;
+      }
+      a{
+        text-decoration: none; 
+      }
+    }
+    .program-image {
+      flex: 0 0 10em;
+      img {
+        max-width: 100%;
+      }
+    }
+  }
+  .weekday-list{
+    display:none;
+    &.active{
+      display:block;
+    }
+  }
 }

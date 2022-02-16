@@ -104,6 +104,43 @@ class Acw_Radio_Public
         wp_enqueue_script($this->plugin_name);
     }
 
+     
+    public function episode_list_shortcode($atts)
+    {
+        $args = shortcode_atts(
+            array(
+                'arg1'   => 'arg1',
+                'arg2'   => 'arg2',
+            ),
+            $atts
+        );
+        $offset = 6;
+        $weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        ob_start();  $cnt = 0; $weekday = date("w") ?>
+
+        <div id="program-list" class="program-list">
+            <div class="program-list-wrapper">
+                <div class="days-list">
+                    <ul class='weekday-toggles'>
+                    <?php foreach ($weekdays as $key => $value) { ?>
+                        <li><button class='weekday-toggle weekday-toggle<?php echo $key; ?>  <?php if($weekday == $key) { echo "active"; }?>' data-day="<?php echo $key; ?>"><?php echo $value; ?></button></li> 
+                    <?php $cnt++; } ?>
+                    </ul>
+                </div>
+                <div class="program-list-programs">
+                    <?php foreach ($weekdays as $key => $value) { ?>
+                        <div class="weekday-list <?php if($weekday == $key) { echo "active"; }?> weekday<?php echo $key; ?>"> </div> 
+                    <?php $cnt++; } ?>
+                </div>
+            </div>
+        </div>
+
+		 <?php
+        $var = ob_get_clean();
+ 
+        return $var;
+    }
+
         
     public function shortcode_function($atts)
     {
@@ -122,16 +159,17 @@ class Acw_Radio_Public
 
         for ($i=0; $i < 24; $i++) {
             $altered = $i - $offset;
-            if($altered < 0)
+            if ($altered < 0) {
                 $altered = $altered + 24;
+            }
 
             $pm = $altered >= 12 ? "am" : "pm";
             // $pm = $altered >= 12 ? "pm" : "am";
             $newTime = $altered >= 12 ? $altered - 12 : $altered;
-            if($newTime == 0)
+            if ($newTime == 0) {
                 $newTime = 12;
+            }
             $time_divs = $time_divs . "<div class='time_slot height_60 hour_$i'>$newTime$pm</div>";
-            
         }
 
         $time_divs = $time_divs . "</div>";
@@ -152,8 +190,7 @@ class Acw_Radio_Public
 
         $weekDaysMobile = "";
 
-        for ($i=0; $i < 7; $i++) { 
-
+        for ($i=0; $i < 7; $i++) {
             $weekDaysMobile = $weekDaysMobile . "<div class='grid-weekday-mobile'><h3 class='mobile-weekday-header'>".$weekdays[$i]."</h3><div class='weekday-container mobile_weekday_$i'> </div></div>";
         }
 

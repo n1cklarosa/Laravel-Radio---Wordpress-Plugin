@@ -230,7 +230,18 @@
 .programguide .desktop-program-grid .program_slot:hover {
   background-color: #eeeeee;
 }
+.programguide.loading .mobile-program-grid {
+  display: none;
+}
+.programguide.loading .desktop-program-grid {
+  display: none;
+}
 
+@media screen and (min-width: 992px) {
+  .mobile-program-grid {
+    display: none;
+  }
+}
 .mobile-program-grid .program_slot_mobile {
   margin-bottom: 20px;
   text-decoration: none;
@@ -259,6 +270,88 @@
 
 .programguide .program-slot div {
   margin-right: 1em;
+}
+
+#program-list {
+  max-width: 100% !important;
+  width: 1400px !important;
+}
+#program-list .program-list-wrapper {
+  width: 100%;
+  display: block;
+}
+@media screen and (min-width: 1048px) {
+  #program-list .program-list-wrapper {
+    display: flex;
+  }
+}
+#program-list .days-list {
+  flex: 0 0 12em;
+}
+#program-list .days-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+#program-list .days-list ul button {
+  background-color: transparent;
+  color: black;
+  font-weight: 400;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+#program-list .days-list ul button.active {
+  font-weight: 700;
+  border: 1px solid black;
+  border-radius: 4px;
+}
+#program-list .program-list-programs {
+  flex: 1;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+#program-list .program-item-wrapper {
+  padding: 30px 0;
+  border-bottom: 1px solid black;
+  display: block;
+}
+#program-list .program-item-wrapper:last-of-type {
+  border-bottom: 0px solid black;
+}
+@media screen and (min-width: 768px) {
+  #program-list .program-item-wrapper {
+    display: flex;
+  }
+}
+#program-list .program-item-wrapper .program-time {
+  flex: 0 0 6em;
+}
+#program-list .program-item-wrapper .program-presenter {
+  flex: 0 0 10em;
+}
+#program-list .program-item-wrapper .program-presenter span {
+  font-size: 12px;
+}
+#program-list .program-item-wrapper .program-details {
+  flex-grow: 1;
+}
+#program-list .program-item-wrapper .program-details h4 {
+  font-weight: 700;
+  margin-top: 0;
+}
+#program-list .program-item-wrapper .program-details a {
+  text-decoration: none;
+}
+#program-list .program-item-wrapper .program-image {
+  flex: 0 0 10em;
+}
+#program-list .program-item-wrapper .program-image img {
+  max-width: 100%;
+}
+#program-list .weekday-list {
+  display: none;
+}
+#program-list .weekday-list.active {
+  display: block;
 }
 
 /*# sourceMappingURL=acw-radio-public.css.map */
