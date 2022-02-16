@@ -232,6 +232,7 @@ class Acw_Radio_Admin
                     'post_type'=>'program',
                     'post_content'=>'testing',
                     'post_status' => 'publish',
+                    'post_excerpt' => $value->introduction
                 ));
                 add_post_meta($id, 'external_id', $value->id, true);
                 $finished[] = $id;

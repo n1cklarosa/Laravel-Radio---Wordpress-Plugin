@@ -188,13 +188,16 @@ $halfhourheight: 32px !default;
       flex: 0 0 6em;
     }
     .program-presenter {
-      flex: 0 0 10em;
+      flex: 0 0 8em;
       span{
         font-size:12px;
       }
     }
     .program-details {
       flex-grow: 1;
+      @media screen and (min-width: 768px) {
+        padding-right:40px;
+      }
       h4{
         font-weight:700; 
         margin-top:0;
