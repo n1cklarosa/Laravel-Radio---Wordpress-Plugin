@@ -9,10 +9,10 @@ class wpb_widget extends WP_Widget
     'wpb_widget',
       
     // Widget name will appear in UI
-    __('WPBeginner Widget', 'wpb_widget_domain'),
+    __('Show On AIr Widget', 'acw_radio'),
       
     // Widget description
-    array( 'description' => __('Sample widget based on WPBeginner Tutorial', 'wpb_widget_domain'), )
+    array( 'description' => __('Simple widget to display the current on air program on page load.', 'wpb_widget_domain'), )
         );
     }
       
