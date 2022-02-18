@@ -71,7 +71,7 @@ const weekDays = [
       $(
         `.${tmp.weekday_start}_hour_${tmp.hour_start}_${slot.minute_start}`
       ).append(
-        `<a href="/program/${slot.program.slug}" class="program_slot height_${
+        `<a href="/${slot.program.slug}" class="program_slot height_${
           slot.duration / 60
         } ${slot.id === onAir.id && "onair"}"><div>${slot.program.name}  
         </div></a>`
@@ -82,7 +82,7 @@ const weekDays = [
 			<div class='program-time'>${`${
         slot.hour_start >= 12 ? pad(slot.hour_start - 12) : pad(slot.hour_start)
       }:${pad(slot.minute_start)}`}${slot.hour_start >= 12 ? "pm" : "am"} </div>
-			<div class='program-details'><a href="/program/${slot.program.slug}"><h4>${
+			<div class='program-details'><a href="/${slot.program.slug}"><h4>${
           slot.id === onAir.id ? "<span class='online-alert'>ON AIR:</span> " : ""
         }${slot.program.name}</h4></a>
 				${slot.program.genre_string ? `<p>${slot.program.genre_string}</p>` : ""}
@@ -101,7 +101,7 @@ const weekDays = [
       );
 
       $(`.mobile_weekday_${slot.weekday_start}`).append(
-        `<a href="/program/${slot.program.slug}" class="program_slot_mobile ${
+        `<a href="/${slot.program.slug}" class="program_slot_mobile ${
           slot.id === onAir.id && "onair"
         }"><div><span class='mobile-times'>${`${pad(slot.hour_start)}:${pad(
           slot.minute_start

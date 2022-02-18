@@ -207,6 +207,8 @@ class Acw_Radio
 
         $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
         $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
+        $this->loader->add_filter("post_type_link", $plugin_public, "gp_remove_cpt_slug", 10, 2); 
+        $this->loader->add_filter("pre_get_posts", $plugin_public, "gp_add_cpt_post_names_to_main_query", 10, 2); 
 
         /**
          * Register shortcode via loader
