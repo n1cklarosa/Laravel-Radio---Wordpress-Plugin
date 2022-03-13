@@ -1,0 +1,9 @@
+ 
+{
+    "apiVersion": 2,
+    "name": "myradio-click/episode-page",
+    "title": "Episode Page",
+    "icon": "universal-access-alt",
+    "category": "layout",
+    "editorScript": "file:./build/index.js"
+}

@@ -148,23 +148,23 @@ $halfhourheight: 32px !default;
       display: flex;
     }
   }
-  .days-list { 
+  .days-list {
     flex: 0 0 12em;
     ul {
       list-style-type: none;
       padding: 0;
       button {
-      //   padding-left:0;
-      //   padding-right:0;
-        background-color:transparent;
-        color:black;
-        font-weight:400;
-        border:1px solid transparent;
-        border-radius:4px;
-        &.active{
-          font-weight:700;
-          border:1px solid black;
-          border-radius:4px;
+        //   padding-left:0;
+        //   padding-right:0;
+        background-color: transparent;
+        color: black;
+        font-weight: 400;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        &.active {
+          font-weight: 700;
+          border: 1px solid black;
+          border-radius: 4px;
         }
       }
     }
@@ -176,9 +176,9 @@ $halfhourheight: 32px !default;
   }
   .program-item-wrapper {
     padding: 30px 0;
-    border-bottom:1px solid black;
-    &:last-of-type{
-      border-bottom:0px solid black; 
+    border-bottom: 1px solid black;
+    &:last-of-type {
+      border-bottom: 0px solid black;
     }
     display: block;
     @media screen and (min-width: 768px) {
@@ -189,21 +189,21 @@ $halfhourheight: 32px !default;
     }
     .program-presenter {
       flex: 0 0 8em;
-      span{
-        font-size:12px;
+      span {
+        font-size: 12px;
       }
     }
     .program-details {
       flex-grow: 1;
       @media screen and (min-width: 768px) {
-        padding-right:40px;
+        padding-right: 40px;
       }
-      h4{
-        font-weight:700; 
-        margin-top:0;
+      h4 {
+        font-weight: 700;
+        margin-top: 0;
       }
-      a{
-        text-decoration: none; 
+      a {
+        text-decoration: none;
       }
     }
     .program-image {
@@ -213,10 +213,53 @@ $halfhourheight: 32px !default;
       }
     }
   }
-  .weekday-list{
-    display:none;
-    &.active{
-      display:block;
+  .weekday-list {
+    display: none;
+    &.active {
+      display: block;
     }
   }
 }
+
+
+.mr-episode-row{
+  width:100%;
+  margin-bottom:10px;
+}
+
+// .mr-site-wrapper {
+//   display: flex;
+//   position: relative;
+//   .mr-site-content-wrapper {
+//     flex-grow: 1;
+//     position: static;
+//     overflow-y: scroll;
+//     height: 100vh;
+//   }
+//   .root-mr {
+//     max-width: 400px;
+//     position: static;
+//     top: 0;
+//     right: 0;
+//     bottom: 0;
+//     left: 0;
+//     overflow-y: scroll;
+//     height: 100vh;
+//     background-color: #f4f4f4;
+//     //  position:static;
+//     //  overflow-y: scroll;
+//     //  flex-grow: 1;
+//     .desktop-mr {
+//       @media screen and (max-width: 992px) {
+//         display: block;
+//       }
+//     }
+//     .mobile-mr {
+//       @media screen and (max-width: 992px) {
+//         display: none;
+//       }
+//     }
+//   }
+// }
+
+

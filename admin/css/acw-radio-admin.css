@@ -1,4 +1,362 @@
 /**
- * All of the CSS for your admin-specific functionality should be
+ * All of the CSS for your public-facing functionality should be
  * included in this file.
  */
+.programguide {
+  max-width: 100% !important;
+}
+.programguide .desktop-program-grid {
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+@media screen and (max-width: 992px) {
+  .programguide .desktop-program-grid {
+    display: none;
+  }
+}
+.programguide .desktop-program-grid .grid-weekday {
+  flex: 1;
+}
+.programguide .desktop-program-grid .time-slots {
+  min-width: 60px;
+}
+.programguide .desktop-program-grid .weekday-heading {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+.programguide .desktop-program-grid .time_slot {
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+.programguide .desktop-program-grid .height_30 {
+  height: 30px;
+  position: relative;
+}
+.programguide .desktop-program-grid .height_30.slot_slot {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #eeeeee;
+}
+.programguide .desktop-program-grid .height_60 {
+  height: 60px;
+}
+.programguide .desktop-program-grid .height_0 {
+  height: 0px;
+}
+.programguide .desktop-program-grid .height_30 {
+  height: 32px;
+}
+.programguide .desktop-program-grid .height_60 {
+  height: 64px;
+}
+.programguide .desktop-program-grid .height_90 {
+  height: 96px;
+}
+.programguide .desktop-program-grid .height_120 {
+  height: 128px;
+}
+.programguide .desktop-program-grid .height_150 {
+  height: 160px;
+}
+.programguide .desktop-program-grid .height_180 {
+  height: 192px;
+}
+.programguide .desktop-program-grid .height_210 {
+  height: 224px;
+}
+.programguide .desktop-program-grid .height_240 {
+  height: 256px;
+}
+.programguide .desktop-program-grid .height_270 {
+  height: 288px;
+}
+.programguide .desktop-program-grid .height_300 {
+  height: 320px;
+}
+.programguide .desktop-program-grid .height_330 {
+  height: 352px;
+}
+.programguide .desktop-program-grid .height_360 {
+  height: 384px;
+}
+.programguide .desktop-program-grid .height_390 {
+  height: 416px;
+}
+.programguide .desktop-program-grid .height_420 {
+  height: 448px;
+}
+.programguide .desktop-program-grid .height_450 {
+  height: 480px;
+}
+.programguide .desktop-program-grid .height_480 {
+  height: 512px;
+}
+.programguide .desktop-program-grid .height_510 {
+  height: 544px;
+}
+.programguide .desktop-program-grid .height_540 {
+  height: 576px;
+}
+.programguide .desktop-program-grid .height_570 {
+  height: 608px;
+}
+.programguide .desktop-program-grid .height_600 {
+  height: 640px;
+}
+.programguide .desktop-program-grid .height_630 {
+  height: 672px;
+}
+.programguide .desktop-program-grid .height_660 {
+  height: 704px;
+}
+.programguide .desktop-program-grid .height_690 {
+  height: 736px;
+}
+.programguide .desktop-program-grid .height_720 {
+  height: 768px;
+}
+.programguide .desktop-program-grid .height_750 {
+  height: 800px;
+}
+.programguide .desktop-program-grid .height_780 {
+  height: 832px;
+}
+.programguide .desktop-program-grid .height_810 {
+  height: 864px;
+}
+.programguide .desktop-program-grid .height_840 {
+  height: 896px;
+}
+.programguide .desktop-program-grid .height_870 {
+  height: 928px;
+}
+.programguide .desktop-program-grid .height_900 {
+  height: 960px;
+}
+.programguide .desktop-program-grid .height_930 {
+  height: 992px;
+}
+.programguide .desktop-program-grid .height_960 {
+  height: 1024px;
+}
+.programguide .desktop-program-grid .height_990 {
+  height: 1056px;
+}
+.programguide .desktop-program-grid .height_1020 {
+  height: 1088px;
+}
+.programguide .desktop-program-grid .height_1050 {
+  height: 1120px;
+}
+.programguide .desktop-program-grid .height_1080 {
+  height: 1152px;
+}
+.programguide .desktop-program-grid .height_1110 {
+  height: 1184px;
+}
+.programguide .desktop-program-grid .height_1140 {
+  height: 1216px;
+}
+.programguide .desktop-program-grid .height_1170 {
+  height: 1248px;
+}
+.programguide .desktop-program-grid .height_1200 {
+  height: 1280px;
+}
+.programguide .desktop-program-grid .height_1230 {
+  height: 1312px;
+}
+.programguide .desktop-program-grid .height_1260 {
+  height: 1344px;
+}
+.programguide .desktop-program-grid .height_1290 {
+  height: 1376px;
+}
+.programguide .desktop-program-grid .height_1320 {
+  height: 1408px;
+}
+.programguide .desktop-program-grid .height_1350 {
+  height: 1440px;
+}
+.programguide .desktop-program-grid .height_1380 {
+  height: 1472px;
+}
+.programguide .desktop-program-grid .height_1410 {
+  height: 1504px;
+}
+.programguide .desktop-program-grid .height_1440 {
+  height: 1536px;
+}
+.programguide .desktop-program-grid .program_slot {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  background-color: white;
+  border-left: 1px solid #f4f4f4;
+  border-right: 1px solid #f4f4f4;
+  border-top: 2px solid #f4f4f4;
+  border-bottom: 2px solid #f4f4f4;
+  z-index: 1;
+  padding: 10px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  text-decoration: none;
+  text-align: center;
+  font-size: 12px;
+}
+.programguide .desktop-program-grid .program_slot .grid-presenter {
+  font-size: 10px;
+}
+@media screen and (min-width: 1200px) {
+  .programguide .desktop-program-grid .program_slot {
+    font-size: 16px;
+  }
+}
+.programguide .desktop-program-grid .program_slot.onair {
+  background-color: #eeeeee;
+}
+.programguide .desktop-program-grid .program_slot:hover {
+  background-color: #eeeeee;
+}
+.programguide.loading .mobile-program-grid {
+  display: none;
+}
+.programguide.loading .desktop-program-grid {
+  display: none;
+}
+
+@media screen and (min-width: 992px) {
+  .mobile-program-grid {
+    display: none;
+  }
+}
+.mobile-program-grid .program_slot_mobile {
+  margin-bottom: 20px;
+  text-decoration: none;
+  display: block;
+}
+.mobile-program-grid .program_slot_mobile .mobile-program-name {
+  font-weight: 700;
+}
+.mobile-program-grid .program_slot_mobile .mobile-presenter {
+  font-size: 0.8em;
+}
+
+.programguide span.load,
+.onairnow span.load {
+  display: none;
+}
+
+.programguide.loading span.load,
+.onairnow.loading span.load {
+  display: flex;
+}
+
+.programguide .program-slot {
+  display: flex;
+}
+
+.programguide .program-slot div {
+  margin-right: 1em;
+}
+
+#program-list {
+  max-width: 100% !important;
+  width: 1400px !important;
+}
+#program-list .program-list-wrapper {
+  width: 100%;
+  display: block;
+}
+@media screen and (min-width: 1048px) {
+  #program-list .program-list-wrapper {
+    display: flex;
+  }
+}
+#program-list .days-list {
+  flex: 0 0 12em;
+}
+#program-list .days-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+#program-list .days-list ul button {
+  background-color: transparent;
+  color: black;
+  font-weight: 400;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+#program-list .days-list ul button.active {
+  font-weight: 700;
+  border: 1px solid black;
+  border-radius: 4px;
+}
+#program-list .program-list-programs {
+  flex: 1;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+#program-list .program-item-wrapper {
+  padding: 30px 0;
+  border-bottom: 1px solid black;
+  display: block;
+}
+#program-list .program-item-wrapper:last-of-type {
+  border-bottom: 0px solid black;
+}
+@media screen and (min-width: 768px) {
+  #program-list .program-item-wrapper {
+    display: flex;
+  }
+}
+#program-list .program-item-wrapper .program-time {
+  flex: 0 0 6em;
+}
+#program-list .program-item-wrapper .program-presenter {
+  flex: 0 0 8em;
+}
+#program-list .program-item-wrapper .program-presenter span {
+  font-size: 12px;
+}
+#program-list .program-item-wrapper .program-details {
+  flex-grow: 1;
+}
+@media screen and (min-width: 768px) {
+  #program-list .program-item-wrapper .program-details {
+    padding-right: 40px;
+  }
+}
+#program-list .program-item-wrapper .program-details h4 {
+  font-weight: 700;
+  margin-top: 0;
+}
+#program-list .program-item-wrapper .program-details a {
+  text-decoration: none;
+}
+#program-list .program-item-wrapper .program-image {
+  flex: 0 0 10em;
+}
+#program-list .program-item-wrapper .program-image img {
+  max-width: 100%;
+}
+#program-list .weekday-list {
+  display: none;
+}
+#program-list .weekday-list.active {
+  display: block;
+}
+
+/*# sourceMappingURL=acw-radio-admin.css.map */

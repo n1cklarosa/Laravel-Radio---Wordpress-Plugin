@@ -1,0 +1,9 @@
+ 
+{
+    "apiVersion": 2,
+    "name": "myradio-click/program-list",
+    "title": "Program List",
+    "icon": "universal-access-alt",
+    "category": "layout",
+    "editorScript": "file:./build/index.js"
+}

@@ -75,6 +75,7 @@ class Acw_Radio_Public
          */
 
         wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/acw-radio-public.css', array(), $this->version, 'all');
+        wp_enqueue_style($this->plugin_name."-react", plugin_dir_url(__FILE__) . 'assets/css/main.chunk.css', array(), $this->version, 'all');
     }
 
     /**
@@ -99,9 +100,14 @@ class Acw_Radio_Public
         $settings = get_option('acw_plugin_options');
         $settings['offset'] = 6;
         wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-public.js', array( 'jquery' ), $this->version, true);
+        wp_register_script($this->plugin_name."-react-runtime", plugin_dir_url(__FILE__) . 'assets/js/runtime.js', null, $this->version, true);
+        wp_register_script($this->plugin_name."-react-main", plugin_dir_url(__FILE__) . 'assets/js/main.js', null, $this->version, true);
+        // wp_register_script($this->plugin_name."-react", plugin_dir_url(__FILE__) . 'assets/js/main.js', array( 'jquery' ), $this->version, true);
         $dataToBePassed = $settings;
         wp_localize_script($this->plugin_name, 'station_vars', $dataToBePassed);
         wp_enqueue_script($this->plugin_name);
+        wp_enqueue_script($this->plugin_name."-react-runtime");
+        wp_enqueue_script($this->plugin_name."-react-main");
     }
 
      

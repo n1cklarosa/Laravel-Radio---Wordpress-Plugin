@@ -53,6 +53,7 @@ class Acw_Radio_Post_Types {
             'labels'             => $labels,
             'description'        => ( isset( $fields['description'] ) ) ? $fields['description'] : '',
             'public'             => ( isset( $fields['public'] ) ) ? $fields['public'] : true,
+            'show_in_rest'             => ( isset( $fields['show_in_rest'] ) ) ? $fields['show_in_rest'] : true,
             'publicly_queryable' => ( isset( $fields['publicly_queryable'] ) ) ? $fields['publicly_queryable'] : true,
             'exclude_from_search'=> ( isset( $fields['exclude_from_search'] ) ) ? $fields['exclude_from_search'] : false,
             'show_ui'            => ( isset( $fields['show_ui'] ) ) ? $fields['show_ui'] : true,

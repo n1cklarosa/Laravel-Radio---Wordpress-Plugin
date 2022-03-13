@@ -11,6 +11,19 @@ const weekDays = [
   "Saturday",
 ];
 
+
+function load_audio(url, title, image = null) {
+  if(!window.pageComponent){
+    alert("The audio player has not been loaded correctly")
+  }
+  window.pageComponent.loadTrack({
+    title: title,
+    url: url,
+    image:image
+  }); 
+}
+
+
 (function ($) {
   "use strict";
   let guides = document.getElementsByClassName("programguide");
@@ -148,4 +161,27 @@ const weekDays = [
     $(`.weekday${dayNo}`).addClass("active");
   }
   $(".weekday-toggle").on("click", updateClick);
+
+
+  $(".mr-play-audio").on("click", function(e){
+    e.preventDefault(); 
+    console.log("here")
+    if (!this.hasAttribute("data-title")) {
+      var title = jQuery(this).text();
+    } else {
+      var title = jQuery(this).data("title");
+    }
+    var image = null
+    if (this.hasAttribute("data-image")) {
+       image = jQuery(this).data("image");
+    }
+    if (!this.hasAttribute("data-url")) {
+      load_audio(jQuery(this).attr("href"), title, image);
+    } else {
+      load_audio(jQuery(this).data("url"), title, image);
+    }
+  }); 
+
+  
+
 })(jQuery);
