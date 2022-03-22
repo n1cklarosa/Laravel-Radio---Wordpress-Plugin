@@ -217,11 +217,13 @@ class Acw_Radio_Admin
             );
             if (count($existingPrograms) > 0) {
                 $finished[] = $existingPrograms[0]->ID;
+                $id = $existingPrograms[0]->ID;
                 $new[] = $existingPrograms[0]->ID;
                 $all[] = $existingPrograms[0]->ID;
                 update_post_meta($id, 'external_id', $value->id);
                 update_post_meta($id, 'mr_description', $value->bio);
                 update_post_meta($id, 'mr_presenters', $value->presenter_string);
+                update_post_meta($id, 'mr_slots', json_encode($value->slots));
             } else {
                 $id = wp_insert_post(array(
                     'post_title' => $value->name,
@@ -234,6 +236,7 @@ class Acw_Radio_Admin
                 add_post_meta($id, 'external_id', $value->id, true);
                 add_post_meta($id, 'mr_description', $value->bio, true);
                 add_post_meta($id, 'mr_presenters', $value->presenter_string, true);
+                add_post_meta($id, 'mr_slots', json_encode($value->slots), true);
                 $finished[] = $id;
                 $all[] = $id;
                 if ($value->image != null) {

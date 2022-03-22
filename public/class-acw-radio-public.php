@@ -105,8 +105,11 @@ class Acw_Radio_Public
         $settings['offset'] = 6;
         if($post->post_type === 'program'):
             wp_register_script('hls', plugin_dir_url(__FILE__) . 'js/vendor/hls.js', null, $this->version, true);
+            wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-public.js', array( 'jquery', 'hls' ), $this->version, true);
+        else:
+            wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-public.js', array( 'jquery'  ), $this->version, true);
         endif;
-        wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-public.js', array( 'jquery', 'hls' ), $this->version, true);
+       
         if (MR_REACT_PLAYER == true):
             wp_register_script($this->plugin_name."-react-runtime", plugin_dir_url(__FILE__) . 'assets/js/runtime.js', null, $this->version, true);
         wp_register_script($this->plugin_name."-react-main", plugin_dir_url(__FILE__) . 'assets/js/main.js', null, $this->version, true);
