@@ -75,7 +75,11 @@ class Acw_Radio_Public
          */
 
         wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/acw-radio-public.css', array(), $this->version, 'all');
+        if (MR_REACT_PLAYER == true):
         wp_enqueue_style($this->plugin_name."-react", plugin_dir_url(__FILE__) . 'assets/css/main.chunk.css', array(), $this->version, 'all');
+        endif;
+
+        wp_enqueue_style($this->plugin_name."-react-single", plugin_dir_url(__FILE__) . 'react/single_player/assets/css/main.chunk.css', array(), $this->version, 'all');
     }
 
     /**
@@ -85,7 +89,7 @@ class Acw_Radio_Public
      */
     public function enqueue_scripts()
     {
-
+        global $post;
         /**
          * This function is provided for demonstration purposes only.
          *
@@ -99,15 +103,34 @@ class Acw_Radio_Public
          */
         $settings = get_option('acw_plugin_options');
         $settings['offset'] = 6;
-        wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-public.js', array( 'jquery' ), $this->version, true);
-        wp_register_script($this->plugin_name."-react-runtime", plugin_dir_url(__FILE__) . 'assets/js/runtime.js', null, $this->version, true);
+        if($post->post_type === 'program'):
+            wp_register_script('hls', plugin_dir_url(__FILE__) . 'js/vendor/hls.js', null, $this->version, true);
+        endif;
+        wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-public.js', array( 'jquery', 'hls' ), $this->version, true);
+        if (MR_REACT_PLAYER == true):
+            wp_register_script($this->plugin_name."-react-runtime", plugin_dir_url(__FILE__) . 'assets/js/runtime.js', null, $this->version, true);
         wp_register_script($this->plugin_name."-react-main", plugin_dir_url(__FILE__) . 'assets/js/main.js', null, $this->version, true);
+        endif;
+        wp_register_script($this->plugin_name."-react-single-runtime", plugin_dir_url(__FILE__) . 'react/single_player/assets/js/runtime.js', null, $this->version, true);
+        wp_register_script($this->plugin_name."-react-single-main", plugin_dir_url(__FILE__) . 'react/single_player/assets/js/main.js', null, $this->version, true);
         // wp_register_script($this->plugin_name."-react", plugin_dir_url(__FILE__) . 'assets/js/main.js', array( 'jquery' ), $this->version, true);
         $dataToBePassed = $settings;
         wp_localize_script($this->plugin_name, 'station_vars', $dataToBePassed);
+        if($post->post_type === 'program'):
+            wp_enqueue_script('hls');
+        endif;
         wp_enqueue_script($this->plugin_name);
-        wp_enqueue_script($this->plugin_name."-react-runtime");
+        if (MR_REACT_PLAYER == true):
+            wp_enqueue_script($this->plugin_name."-react-runtime");
         wp_enqueue_script($this->plugin_name."-react-main");
+        endif;
+
+        if ($post) {
+            if ($post->ID == 16):
+                wp_enqueue_script($this->plugin_name."-react-single-runtime");
+                wp_enqueue_script($this->plugin_name."-react-single-main");
+            endif;
+        }
     }
 
      
@@ -122,20 +145,26 @@ class Acw_Radio_Public
         );
         $offset = 6;
         $weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        ob_start();  $cnt = 0; $weekday = date("w") ?>
+        ob_start();
+        $cnt = 0;
+        $weekday = date("w") ?>
 
         <div id="program-list" class="program-list">
             <div class="program-list-wrapper">
                 <div class="days-list">
                     <ul class='weekday-toggles'>
                     <?php foreach ($weekdays as $key => $value) { ?>
-                        <li><button class='weekday-toggle weekday-toggle<?php echo $key; ?>  <?php if($weekday == $key) { echo "active"; }?>' data-day="<?php echo $key; ?>"><?php echo $value; ?></button></li> 
+                        <li><button class='weekday-toggle weekday-toggle<?php echo $key; ?>  <?php if ($weekday == $key) {
+            echo "active";
+        }?>' data-day="<?php echo $key; ?>"><?php echo $value; ?></button></li> 
                     <?php $cnt++; } ?>
                     </ul>
                 </div>
                 <div class="program-list-programs">
                     <?php foreach ($weekdays as $key => $value) { ?>
-                        <div class="weekday-list <?php if($weekday == $key) { echo "active"; }?> weekday<?php echo $key; ?>"> </div> 
+                        <div class="weekday-list <?php if ($weekday == $key) {
+            echo "active";
+        }?> weekday<?php echo $key; ?>"> </div> 
                     <?php $cnt++; } ?>
                 </div>
             </div>
@@ -216,10 +245,10 @@ class Acw_Radio_Public
     /**
      * Remove the slug from published post permalinks. Only affect our custom post type, though.
      */
-    public function gp_remove_cpt_slug( $post_link, $post ) {
-
-        if ( 'program' === $post->post_type && 'publish' === $post->post_status ) {
-            $post_link = str_replace( '/' . $post->post_type . '/', '/', $post_link );
+    public function gp_remove_cpt_slug($post_link, $post)
+    {
+        if ('program' === $post->post_type && 'publish' === $post->post_status) {
+            $post_link = str_replace('/' . $post->post_type . '/', '/', $post_link);
         }
 
         return $post_link;
@@ -232,25 +261,25 @@ class Acw_Radio_Public
      *
      * @param $query The current query.
      */
-    function gp_add_cpt_post_names_to_main_query( $query ) {
+    public function gp_add_cpt_post_names_to_main_query($query)
+    {
 
         // Bail if this is not the main query.
-        if ( ! $query->is_main_query() ) {
+        if (! $query->is_main_query()) {
             return;
         }
 
         // Bail if this query doesn't match our very specific rewrite rule.
-        if ( ! isset( $query->query['page'] ) || 2 !== count( $query->query ) ) {
+        if (! isset($query->query['page']) || 2 !== count($query->query)) {
             return;
         }
 
         // Bail if we're not querying based on the post name.
-        if ( empty( $query->query['name'] ) ) {
+        if (empty($query->query['name'])) {
             return;
         }
 
         // Add CPT to the list of post types WP will include when it queries based on the post name.
-        $query->set( 'post_type', array( 'post', 'page', 'program' ) );
+        $query->set('post_type', array( 'post', 'page', 'program' ));
     }
-
 }

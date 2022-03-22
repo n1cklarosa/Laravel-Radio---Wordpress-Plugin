@@ -171,16 +171,7 @@ class Acw_Radio_Admin
         $options = get_option('acw_plugin_options');
         echo "<input id='acw_plugin_setting_api_key' name='acw_plugin_options[api_key]' type='text' value='" . esc_attr($options['api_key']) . "' />";
     }
-
-    // public function acw_plugin_setting_results_limit() {
-    // 	$options = get_option( 'acw_plugin_options' );
-    // 	echo "<input id='acw_plugin_setting_results_limit' name='acw_plugin_options[results_limit]' type='text' value='" . esc_attr( $options['results_limit'] ) . "' />";
-    // }
-
-    // public function acw_plugin_setting_start_date() {
-    // 	$options = get_option( 'acw_plugin_options' );
-    // 	echo "<input id='acw_plugin_setting_start_date' name='acw_plugin_options[start_date]' type='text' value='" . esc_attr( $options['start_date'] ) . "' />";
-    // }
+ 
 
 
     public function ajax_first()
@@ -210,8 +201,9 @@ class Acw_Radio_Admin
         $decoded = json_decode($response['body']);
         $progams = $decoded->data->programs;
         $finished = [];
-        $new = []; 
-        $att = []; 
+        $new = [];
+        $att = [];
+        $all = [];
         foreach ($progams as $key => $value) {
             $existingPrograms = get_posts(
                 array(
@@ -226,24 +218,51 @@ class Acw_Radio_Admin
             if (count($existingPrograms) > 0) {
                 $finished[] = $existingPrograms[0]->ID;
                 $new[] = $existingPrograms[0]->ID;
+                $all[] = $existingPrograms[0]->ID;
+                update_post_meta($id, 'external_id', $value->id);
+                update_post_meta($id, 'mr_description', $value->bio);
+                update_post_meta($id, 'mr_presenters', $value->presenter_string);
             } else {
                 $id = wp_insert_post(array(
                     'post_title' => $value->name,
                     'post_type'=>'program',
-                    'post_content'=>'testing',
+                    'post_name'=> $value->slug,
+                    'post_content'=>'[show_program slug="'.$value->slug.'"]',
                     'post_status' => 'publish',
-                    'post_excerpt' => $value->introduction
+                    'post_excerpt' => $value->introduction === null ? "" : $value->introduction
                 ));
                 add_post_meta($id, 'external_id', $value->id, true);
+                add_post_meta($id, 'mr_description', $value->bio, true);
+                add_post_meta($id, 'mr_presenters', $value->presenter_string, true);
                 $finished[] = $id;
-
+                $all[] = $id;
                 if ($value->image != null) {
-                    $att[] = $this->remote_image_as_featured_image($id, $value->image->url ) ;
+                    $pos = strpos($value->image->url, 'webp');
+                    $pos2 = strpos($value->image->url, 'svg');
+                    if ($pos !== false) {
+                    } else {
+                        if ($pos !== false) {
+                        } else {
+                            $att[] = $this->remote_image_as_featured_image($id, $value->image->url) ;
+                        }
+                    }
                 }
             }
         }
 
-        die(json_encode([$finished, $att, $new, $decoded]));
+        $redundant = get_posts(
+            array(
+                    'post_type' => 'program',
+                    'post__not_in' => $all,
+                    'posts_per_page' => 500
+                )
+        );
+
+        foreach ($redundant as $key => $value) {
+            wp_delete_post($value->ID, false);
+        }
+
+        die(json_encode([$finished, $att, $new, $decoded, $redundant, $all]));
     }
      
     public function remote_image_as_featured_image($post_id, $url, $attachment_data = array())

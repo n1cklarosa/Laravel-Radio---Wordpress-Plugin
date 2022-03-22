@@ -34,6 +34,10 @@ define('MR_API_URL', 'https://app.myradio.click/api');
 define('MR_HLS_URL', 'https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration');
 define('MR_DATE_FORMAT', 'l, j F, Y');
 
+if (!defined('MR_REACT_PLAYER')):
+    define('MR_REACT_PLAYER', true);
+endif;
+
 global $mr_episode_data;
 /**
  * Currently plugin version.
@@ -146,7 +150,7 @@ function add_code_before_content($content)
 
         if ($mr_episode_data === false) {
             ob_start();
-            $results = get_latest_episodes(); 
+            $results = get_latest_episodes();
             if (isset($results->data)) {
                 $episodes = $results->data;
             } else {
@@ -294,16 +298,18 @@ function get_latest_episodes()
     return json_decode($body);
 }
 
- 
-add_action('wp_body_open', 'wpdoc_add_custom_body_open_code');
- 
-function wpdoc_add_custom_body_open_code()
-{
-    echo '<div class="mr-site-wrapper"><div class="mr-site-content-wrapper">';
-}
+if (MR_REACT_PLAYER == true):
+        
+    add_action('wp_body_open', 'wpdoc_add_custom_body_open_code');
+    
+    function wpdoc_add_custom_body_open_code()
+    {
+        echo '<div class="mr-site-wrapper"><div class="mr-site-content-wrapper">';
+    }
 
-function prefix_footer_code()
-{
-    echo '</div><div class="root-mr" id="root-mr"></div></div>';
-}
-add_action('wp_footer', 'prefix_footer_code');
+    function prefix_footer_code()
+    {
+        echo '</div><div class="root-mr" id="root-mr"></div></div>';
+    }
+    add_action('wp_footer', 'prefix_footer_code');
+endif;

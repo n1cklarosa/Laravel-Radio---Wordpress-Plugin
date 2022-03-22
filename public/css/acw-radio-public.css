@@ -359,9 +359,42 @@
   display: block;
 }
 
+.episode-row {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  background-color: transparent !important;
+  border: 0px solid transparent !important;
+  width: 100%;
+  font-weight: bold;
+  font-size: 20px;
+  padding: 10px;
+}
+
+.episode-row:hover {
+  background-color: #f4f4f4 !important;
+}
+
+.episode-row i {
+  font-size: 30px;
+  margin-right: 15px;
+}
+
 .mr-episode-row {
   width: 100%;
   margin-bottom: 10px;
+}
+
+.page-id-16 #main-header, .page-id-16 #top-header {
+  display: none !important;
+}
+
+.page-id-16 .page-container,
+.page-id-16 .et_pb_row,
+.page-id-16 .page-container {
+  padding-top: 0 !important;
+  width: 100% !important;
 }
 
 /*# sourceMappingURL=acw-radio-public.css.map */
