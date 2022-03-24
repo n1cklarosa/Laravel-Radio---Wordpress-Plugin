@@ -135,7 +135,8 @@ class Acw_Radio_Admin
 		<form action="options.php" method="post">
 			<?php
             settings_fields('acw_plugin_options');
-        do_settings_sections('acw_plugin'); ?>
+            
+            do_settings_sections('acw_plugin'); ?>
 			<input name="submit" class="button button-primary" type="submit" value="<?php esc_attr_e('Save'); ?>" />
 		</form>
 		<button style="margin-top:40px;" class='reload-programs button button-primar'>Reload Programs from API</button>
@@ -148,6 +149,8 @@ class Acw_Radio_Admin
         add_settings_section('api_settings', 'API Settings', [$this, 'acw_plugin_section_text'], 'acw_plugin');
     
         add_settings_field('acw_plugin_setting_api_key', 'API Key', [$this, 'acw_plugin_setting_api_key'], 'acw_plugin', 'api_settings');
+        add_settings_field('acw_plugin_setting_hls', 'HLS Slug', [$this, 'acw_plugin_setting_hls'], 'acw_plugin', 'api_settings');
+        add_settings_field('acw_plugin_setting_icecast', 'Icecast URL', [$this, 'acw_plugin_setting_icecast'], 'acw_plugin', 'api_settings');
     }
 
     public function acw_plugin_options_validate($input)
@@ -170,6 +173,19 @@ class Acw_Radio_Admin
     {
         $options = get_option('acw_plugin_options');
         echo "<input id='acw_plugin_setting_api_key' name='acw_plugin_options[api_key]' type='text' value='" . esc_attr($options['api_key']) . "' />";
+    }
+ 
+    public function acw_plugin_setting_hls()
+    {
+        $options = get_option('acw_plugin_options');
+        echo "<input id='acw_plugin_setting_hls' name='acw_plugin_options[hls]' type='text' value='" . esc_attr($options['hls']) . "' />";
+    }
+ 
+ 
+    public function acw_plugin_setting_icecast()
+    {
+        $options = get_option('acw_plugin_options');
+        echo "<input id='acw_plugin_setting_icecast' name='acw_plugin_options[icecast]' type='text' value='" . esc_attr($options['icecast']) . "' />";
     }
  
 

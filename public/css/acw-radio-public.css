@@ -384,6 +384,39 @@
 .mr-episode-row {
   width: 100%;
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.mr-episode-row p {
+  margin-bottom: 0 !important;
+  margin-top: 0 !important;
+}
+
+.mr-episode-row button.mr-play-audio, .list-episode-button {
+  background-color: transparent !important;
+  margin-right: 15px;
+  border: 0 !important;
+  background: transparent !important;
+  box-sizing: border-box !important;
+  width: 0;
+  height: 30px !important;
+  border-color: transparent transparent transparent #202020 !important;
+  transition: 100ms all ease;
+  cursor: pointer;
+  border-style: solid !important;
+  border-width: 18.5px 0 18.5px 30px !important;
+}
+
+.mr-flex {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+
+.player-container {
+  background-color: black;
+  color: white;
 }
 
 .page-id-16 #main-header, .page-id-16 #top-header {

@@ -76,10 +76,9 @@ class Acw_Radio_Public
 
         wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/acw-radio-public.css', array(), $this->version, 'all');
         if (MR_REACT_PLAYER == true):
-        wp_enqueue_style($this->plugin_name."-react", plugin_dir_url(__FILE__) . 'assets/css/main.chunk.css', array(), $this->version, 'all');
+        wp_enqueue_style($this->plugin_name."-react", plugin_dir_url(__FILE__) . 'assets/css/main.chunk.css', array(), $this->version, 'all'); else:
+            wp_enqueue_style($this->plugin_name."-react-single", plugin_dir_url(__FILE__) . 'react/single_player/assets/css/main.chunk.css', array(), $this->version, 'all');
         endif;
-
-        wp_enqueue_style($this->plugin_name."-react-single", plugin_dir_url(__FILE__) . 'react/single_player/assets/css/main.chunk.css', array(), $this->version, 'all');
     }
 
     /**
@@ -103,53 +102,94 @@ class Acw_Radio_Public
          */
         $settings = get_option('acw_plugin_options');
         $settings['offset'] = 6;
-        if($post->post_type === 'program'):
+        if ($post->post_type === 'program'):
             wp_register_script('hls', plugin_dir_url(__FILE__) . 'js/vendor/hls.js', null, $this->version, true);
-            wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-public.js', array( 'jquery', 'hls' ), $this->version, true);
-        else:
+        wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-public.js', array( 'jquery', 'hls' ), $this->version, true); else:
             wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-public.js', array( 'jquery'  ), $this->version, true);
         endif;
        
         if (MR_REACT_PLAYER == true):
             wp_register_script($this->plugin_name."-react-runtime", plugin_dir_url(__FILE__) . 'assets/js/runtime.js', null, $this->version, true);
-        wp_register_script($this->plugin_name."-react-main", plugin_dir_url(__FILE__) . 'assets/js/main.js', null, $this->version, true);
-        endif;
-        wp_register_script($this->plugin_name."-react-single-runtime", plugin_dir_url(__FILE__) . 'react/single_player/assets/js/runtime.js', null, $this->version, true);
+        wp_register_script($this->plugin_name."-react-main", plugin_dir_url(__FILE__) . 'assets/js/main.js', null, $this->version, true); else:
+            wp_register_script($this->plugin_name."-react-single-runtime", plugin_dir_url(__FILE__) . 'react/single_player/assets/js/runtime.js', null, $this->version, true);
         wp_register_script($this->plugin_name."-react-single-main", plugin_dir_url(__FILE__) . 'react/single_player/assets/js/main.js', null, $this->version, true);
+        endif;
         // wp_register_script($this->plugin_name."-react", plugin_dir_url(__FILE__) . 'assets/js/main.js', array( 'jquery' ), $this->version, true);
         $dataToBePassed = $settings;
         wp_localize_script($this->plugin_name, 'station_vars', $dataToBePassed);
-        if($post->post_type === 'program'):
+        if ($post->post_type === 'program'):
             wp_enqueue_script('hls');
         endif;
         wp_enqueue_script($this->plugin_name);
         if (MR_REACT_PLAYER == true):
             wp_enqueue_script($this->plugin_name."-react-runtime");
-        wp_enqueue_script($this->plugin_name."-react-main");
-        endif;
-
-        if ($post) {
-            if ($post->ID == 16):
-                wp_enqueue_script($this->plugin_name."-react-single-runtime");
+        wp_enqueue_script($this->plugin_name."-react-main"); else:
+            if ($post) {
+                if ($post->ID == 16):
+                    wp_enqueue_script($this->plugin_name."-react-single-runtime");
                 wp_enqueue_script($this->plugin_name."-react-single-main");
-            endif;
-        }
+                endif;
+            }
+        endif;
+    }
+
+    public function add_vars_to_windows()
+    {
+        $settings = get_option('acw_plugin_options'); ?>
+        <script>
+            window.stream_url = "<?php echo isset($settings['icecast']) ? $settings['icecast'] : ""; ?>"
+            window.station_slug = "<?php echo isset($settings['api_key']) ? $settings['api_key'] : ""; ?>"
+            window.station_hls = "<?php echo isset($settings['hls']) ? $settings['hls'] : ""; ?>"
+        </script>
+        <?php
     }
 
      
-    public function program_page_shortcode($atts){
+    public function program_page_shortcode($atts)
+    {
+        global $post;
         $args = shortcode_atts(
             array(
-                'slug'   => null, 
+                'slug'   => null,
             ),
             $atts
         );
         ob_start();
 
-        ?>
-        <div id="mrepisodes" data-slug="<?php echo $args['slug'];?>"></div>
 
+	    echo get_the_post_thumbnail( $post->ID, 'large' );
+ 
+        if (MR_REACT_PLAYER == true):
+        ?>
         <?php
+        $slots = get_post_meta(get_the_ID(), 'mr_slots', true);
+        $presenters = get_post_meta(get_the_ID(), 'mr_presenters', true);
+        $intro = get_post_meta(get_the_ID(), 'mr_description', true);
+        if ($presenters):
+                        echo "<p><strong>Presented By:</strong> $presenters</p>";
+        endif;
+        if ($intro):
+                        echo wpautop($intro);
+        endif;
+        if ($slots):
+                        $slots = json_decode($slots);
+        foreach ($slots as $slot) {
+            if ($slot->readable->hours > 1) {
+                $texzt = 's';
+            } else {
+                $text = '';
+            }
+            // var_dump($slot->readable);
+            echo "<p>".$slot->readable->time_start." on ".$slot->readable->day_start." for ".$slot->readable->hours. " hours".$text.'</p>';
+        }
+        endif;
+
+        // the_content();?>
+            <div id="mrreactepisodes" data-slug="<?php echo $args['slug']; ?>"></div> 
+        <?php
+        else: ?> 
+            <div id="mrepisodes" data-slug="<?php echo $args['slug']; ?>"></div> 
+        <?php endif;
 
         $var = ob_get_clean();
         return $var;
@@ -168,7 +208,10 @@ class Acw_Radio_Public
         $weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         ob_start();
         $cnt = 0;
-        $weekday = date("w") ?>
+        $weekday = date("w");
+            // var_dump($weekday);
+            
+        ?>
 
         <div id="program-list" class="program-list">
             <div class="program-list-wrapper">
