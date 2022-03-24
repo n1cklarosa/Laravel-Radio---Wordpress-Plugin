@@ -219,6 +219,7 @@ class Acw_Radio
          */
         $this->loader->add_shortcode("programguide", $plugin_public, "shortcode_function", $priority = 10);
         $this->loader->add_shortcode("programlist", $plugin_public, "episode_list_shortcode", $priority = 10);
+        $this->loader->add_shortcode("show_program", $plugin_public, "program_page_shortcode", $priority = 10);
     }
 
     /**

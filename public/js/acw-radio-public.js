@@ -25,11 +25,18 @@ function load_audio(url, title, image = null) {
 (function ($) {
   "use strict";
 
+})(jQuery);
 
-  $(".listen-live-button").on("click", async function (e) {
-    
-    newwindow=window.open("https://dev.5ebi.com.au/player",'name',`height=580,width=700`);
-    if (window.focus) {newwindow.focus()}
+
+jQuery(".listen-live-button").on("click", async function (e) {
+    newwindow = window.open(
+      "https://staging5ebi.wpengine.com/player",
+      "name",
+      `height=580,width=700`
+    );
+    if (window.focus) {
+      newwindow.focus();
+    }
     return false;
   });
 
@@ -39,10 +46,7 @@ function load_audio(url, title, image = null) {
   let guides = document.getElementsByClassName("programguide");
   let onairs = document.getElementsByClassName("onairnow");
   let list = document.getElementsByClassName("program-list");
-  let programDiv = $("#mrepisodes");
-  
-  
-
+  let programDiv = jQuery("#mrepisodes");
 
   const sortOutOffset = (thisSlot) => {
     let newSlot = { ...thisSlot };
@@ -92,7 +96,7 @@ function load_audio(url, title, image = null) {
     // const response = await fetch(
     //   `https://radio-online.nyc3.digitaloceanspaces.com/cached/stations/${station_vars.api_key}/programs/${slug}.json`
     // );
-    const div = $("#mrepisodes");
+    const div = jQuery("#mrepisodes");
     const results = await response.json();
     let tmp;
     console.log(results);
@@ -107,12 +111,12 @@ function load_audio(url, title, image = null) {
         enableStreaming: true,
         autoRecoverError: true,
       };
-      var hls = new Hls(hlsjsConfig); 
+      var hls = new Hls(hlsjsConfig);
       hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, function () {
         // video.play();
       });
-    } 
+    }
     // else if (video.canPlayType("application/vnd.apple.mpegurl")) {
     //   video.src =
     //     "https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/5ebi/2022-03-17T16:00:00+10:30/3600/master.m3u8?unique=website";
@@ -137,12 +141,10 @@ function load_audio(url, title, image = null) {
       });
     }
 
-    
-    $(".toggle-play").on("click", async function (e) {
+    jQuery(".toggle-play").on("click", async function (e) {
       console.log("play pressed");
-      // await hls.loadSource($(this).data("url"));
+      // await hls.loadSource(jQuery(this).data("url"));
       video.play();
-
 
       if (Hls.isSupported()) {
         var hlsjsConfig = {
@@ -153,13 +155,13 @@ function load_audio(url, title, image = null) {
           enableStreaming: true,
           autoRecoverError: true,
         };
-        var hls = new Hls(hlsjsConfig); 
+        var hls = new Hls(hlsjsConfig);
         hls.attachMedia(video);
-        hls.loadSource($(this).data("url"));
+        hls.loadSource(jQuery(this).data("url"));
         hls.on(Hls.Events.MANIFEST_PARSED, function () {
           video.play();
         });
-      } 
+      }
     });
   };
 
@@ -178,7 +180,7 @@ function load_audio(url, title, image = null) {
     results.data.guide.forEach((slot) => {
       tmp = sortOutOffset(slot);
 
-      $(
+      jQuery(
         `.${tmp.weekday_start}_hour_${tmp.hour_start}_${slot.minute_start}`
       ).append(
         `<a href="/${slot.program.slug}" class="program_slot height_${
@@ -187,7 +189,7 @@ function load_audio(url, title, image = null) {
         </div></a>`
       );
 
-      $(`.weekday${tmp.weekday_start}`).append(
+      jQuery(`.weekday${tmp.weekday_start}`).append(
         `<div class='program-item-wrapper ${slot.id === onAir.id && "onair"}'>
 			<div class='program-time'>${`${
         slot.hour_start >= 12 ? pad(slot.hour_start - 12) : pad(slot.hour_start)
@@ -212,7 +214,7 @@ function load_audio(url, title, image = null) {
 		</div>`
       );
 
-      $(`.mobile_weekday_${slot.weekday_start}`).append(
+      jQuery(`.mobile_weekday_${slot.weekday_start}`).append(
         `<a href="/${slot.program.slug}" class="program_slot_mobile ${
           slot.id === onAir.id && "onair"
         }"><div><span class='mobile-times'>${`${pad(slot.hour_start)}:${pad(
@@ -233,59 +235,93 @@ function load_audio(url, title, image = null) {
         (item) => item.weekday_start === index
       );
     }
-    $(".programguide").removeClass("loading");
+    jQuery(".programguide").removeClass("loading");
   };
 
-  if (station_vars) {
-    if (guides.length > 0) {
-      getGuide();
-    } else {
-      console.log("Guide not found");
-    }
-    if (list.length > 0) {
-      getGuide();
-    } else {
-      console.log("List not found");
-    }
-    if (onairs.length > 0) {
-      getOnAir();
-    } else {
-      console.log("OnAir not found");
-    }
-    if (programDiv) {
-      console.log("program div exists apparently", programDiv);
-      let slug = jQuery("#mrepisodes").data("slug");
-      if (slug) getProgramEpisodes(slug);
-    }
-  } else {
-    console.log("Tjos [art");
-  }
+  //   if (station_vars) {
+  //     if (guides.length > 0) {
+  //       getGuide();
+  //     } else {
+  //       console.log("Guide not found");
+  //     }
+  //     if (list.length > 0) {
+  //       getGuide();
+  //     } else {
+  //       console.log("List not found");
+  //     }
+  //     if (onairs.length > 0) {
+  //       getOnAir();
+  //     } else {
+  //       console.log("OnAir not found");
+  //     }
+  //     if (programDiv) {
+  //       console.log("program div exists apparently", programDiv);
+  //       let slug = jQuery("#mrepisodes").data("slug");
+  //       if (slug) getProgramEpisodes(slug);
+  //     }
+  //   } else {
+  //     console.log("Tjos [art");
+  //   }
 
   function updateClick() {
-    let dayNo = $(this).data("day");
-    $(".weekday-toggle").removeClass("active");
-    $(this).addClass("active");
-    $(`.weekday-list`).removeClass("active");
-    $(`.weekday${dayNo}`).addClass("active");
+    let dayNo = jQuery(this).data("day");
+    jQuery(".weekday-toggle").removeClass("active");
+    jQuery(this).addClass("active");
+    jQuery(`.weekday-list`).removeClass("active");
+    jQuery(`.weekday${dayNo}`).addClass("active");
   }
-  $(".weekday-toggle").on("click", updateClick);
 
-  $(".mr-play-audio").on("click", function (e) {
-    e.preventDefault();
-    console.log("here");
-    if (!this.hasAttribute("data-title")) {
-      var title = jQuery(this).text();
+  const initMr = async () => {
+
+    let guides = document.getElementsByClassName("programguide");
+    let onairs = document.getElementsByClassName("onairnow");
+    let list = document.getElementsByClassName("program-list");
+    let programDiv = jQuery("#mrepisodes");
+  
+    if (station_vars) {
+      if (guides.length > 0) {
+        getGuide();
+      } else {
+        console.log("Guide not found");
+      }
+      if (list.length > 0) {
+        getGuide();
+      } else {
+        console.log("List not found");
+      }
+      if (onairs.length > 0) {
+        getOnAir();
+      } else {
+        console.log("OnAir not found");
+      }
+      if (programDiv) {
+        console.log("Found episode page")
+        let slug = jQuery("#mrepisodes").data("slug");
+        if (slug) getProgramEpisodes(slug);
+      }
     } else {
-      var title = jQuery(this).data("title");
+      console.log("Tjos [art");
     }
-    var image = null;
-    if (this.hasAttribute("data-image")) {
-      image = jQuery(this).data("image");
-    }
-    if (!this.hasAttribute("data-url")) {
-      load_audio(jQuery(this).attr("href"), title, image);
-    } else {
-      load_audio(jQuery(this).data("url"), title, image);
-    }
-  });
-})(jQuery);
+    jQuery(".weekday-toggle").on("click", updateClick);
+
+    jQuery(".mr-play-audio").on("click", function (e) {
+      e.preventDefault();
+      console.log("here");
+      if (!this.hasAttribute("data-title")) {
+        var title = jQuery(this).text();
+      } else {
+        var title = jQuery(this).data("title");
+      }
+      var image = null;
+      if (this.hasAttribute("data-image")) {
+        image = jQuery(this).data("image");
+      }
+      if (!this.hasAttribute("data-url")) {
+        load_audio(jQuery(this).attr("href"), title, image);
+      } else {
+        load_audio(jQuery(this).data("url"), title, image);
+      }
+    });
+  };
+
+  initMr();

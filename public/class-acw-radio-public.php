@@ -137,6 +137,24 @@ class Acw_Radio_Public
     }
 
      
+    public function program_page_shortcode($atts){
+        $args = shortcode_atts(
+            array(
+                'slug'   => null, 
+            ),
+            $atts
+        );
+        ob_start();
+
+        ?>
+        <div id="mrepisodes" data-slug="<?php echo $args['slug'];?>"></div>
+
+        <?php
+
+        $var = ob_get_clean();
+        return $var;
+    }
+
     public function episode_list_shortcode($atts)
     {
         $args = shortcode_atts(
