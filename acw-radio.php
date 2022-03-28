@@ -38,6 +38,10 @@ if (!defined('MR_REACT_PLAYER')):
     define('MR_REACT_PLAYER', true);
 endif;
 
+if (!defined('MR_GRID_DROPDOWN')):
+    define('MR_GRID_DROPDOWN', false);
+endif;
+
 global $mr_episode_data;
 /**
  * Currently plugin version.
