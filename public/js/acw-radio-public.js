@@ -269,7 +269,7 @@ const getGuide = async () => {
         slot.minute_start
       )}`} to ${`${pad(slot.hour_end)}:${pad(slot.minute_end)}`}</span> 
 		<div class='mobile-program-name'>${
-      slot.id === onAir.id && "<span class='online-alert'>ON AIR:</span> "
+      slot.id === onAir.id ? "<span class='online-alert'>ON AIR:</span> " : ""
     }${slot.program.name}</div> 
 		${
       slot.program.presenter_string &&

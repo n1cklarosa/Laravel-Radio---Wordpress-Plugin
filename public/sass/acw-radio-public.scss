@@ -211,6 +211,9 @@ $halfhourheight: 32px !default;
       img {
         max-width: 100%;
       }
+      @media screen and (max-width: 992px) {
+                display: none;
+              }
     }
   }
   .weekday-list {

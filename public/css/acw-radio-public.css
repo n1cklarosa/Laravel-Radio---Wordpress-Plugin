@@ -352,6 +352,11 @@
 #program-list .program-item-wrapper .program-image img {
   max-width: 100%;
 }
+@media screen and (max-width: 992px) {
+  #program-list .program-item-wrapper .program-image {
+    display: none;
+  }
+}
 #program-list .weekday-list {
   display: none;
 }
