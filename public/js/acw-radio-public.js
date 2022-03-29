@@ -25,12 +25,12 @@ function load_audio(url, title, image = null) {
 (function ($) {
   "use strict";
 })(jQuery);
-
+console.log("Station", station_vars);
 jQuery(".listen-live-button").on("click", async function (e) {
   newwindow = window.open(
-    "https://staging5ebi.wpengine.com/player",
+    `${window.location.origin}/player`,
     "name",
-    `height=580,width=700`
+    `height=700,width=700`
   );
   if (window.focus) {
     newwindow.focus();
@@ -82,8 +82,8 @@ const getOnAir = async () => {
     let newTitle = document.createElement("h3");
     let img = document.createElement("img");
     newTitle.append(`ONAIR: ${results.data.slot.program.name}`);
-    if(results.data.slot.program.image){
-      img.src=results.data.slot.program.image.url;
+    if (results.data.slot.program.image) {
+      img.src = results.data.slot.program.image.url;
       element.append(img);
     }
     element.append(newTitle);
@@ -95,37 +95,23 @@ const getProgramEpisodes = async (slug) => {
   const response = await fetch(
     `https://app.myradio.click/api/public/station/${station_vars.api_key}/program/${slug}?showEpisodes=true`
   );
-  console.log("Run");
   const div = jQuery("#mrepisodes");
   const results = await response.json();
-  let tmp;
-  console.log(results);
-  var video = document.getElementById("video");
-
-  if (Hls.isSupported()) {
-    var hlsjsConfig = {
-      // "debug": true,
-      enableWorker: true,
-      lowLatencyMode: true,
-      backBufferLength: 90,
-      enableStreaming: true,
-      autoRecoverError: true,
-    };
-    var hls = new Hls(hlsjsConfig);
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED, function () {
-      // video.play();
-    });
-  }
 
   if (results?.data?.episodes) {
     div.append("<h4 id='LatestEpisodes'>Latest Episodes</h4>");
     results.data.episodes.map((item, i) => {
+      console.log("station", station_vars);
       // let url = `https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/${station_vars.api_key}/aac_96/${item.local}/${item.duration}/playlist.m3u8?unique=website`;
       let url = `https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/${station_vars.hls}/aac_96/${item.local}/${item.duration}/playlist.m3u8?unique=website`;
+      let title = `${results.data.name} - ${item.readable}`;
+
+      let playerUrl = `url=${encodeURIComponent(
+        url
+      )}=&title=${encodeURIComponent(title)}`;
       if (item.timestamp > 1646548252) {
         div.append(
-          `<button class="episode-row toggle-play" class="toggle-play" data-url="${url}"><i class="fa fa-play"></i> ${item.readable}</button>`
+          `<a class="episode-row toggle-play" data-popup="/player?${playerUrl}"><i class="fa fa-play"></i> ${item.readable}</a>`
         );
       }
       return item;
@@ -133,25 +119,15 @@ const getProgramEpisodes = async (slug) => {
   }
 
   jQuery(".toggle-play").on("click", async function (e) {
-    console.log("play pressed");
-    // await hls.loadSource(jQuery(this).data("url"));
-    video.play();
+    let popup = jQuery(this).data("popup");
 
-    if (Hls.isSupported()) {
-      var hlsjsConfig = {
-        // "debug": true,
-        enableWorker: true,
-        lowLatencyMode: true,
-        backBufferLength: 90,
-        enableStreaming: true,
-        autoRecoverError: true,
-      };
-      var hls = new Hls(hlsjsConfig);
-      hls.attachMedia(video);
-      hls.loadSource(jQuery(this).data("url"));
-      hls.on(Hls.Events.MANIFEST_PARSED, function () {
-        video.play();
-      });
+    newwindow = window.open(
+      `${window.location.origin}/${popup}`,
+      "name",
+      `height=700,width=700`
+    );
+    if (window.focus) {
+      newwindow.focus();
     }
   });
 };
@@ -203,6 +179,20 @@ const initReactPlayButtons = async () => {
     }
   });
 };
+const initNotReactPlayButtons = async () => {
+  jQuery(".mr-play-audio").on("click", function (e) {
+    e.preventDefault(); 
+    let popup = jQuery(this).data("popup");
+    newwindow = window.open(
+      `${window.location.origin}/${popup}`,
+      "name",
+      `height=700,width=700`
+    );
+    if (window.focus) {
+      newwindow.focus();
+    }
+  });
+};
 
 const getGuide = async () => {
   // const response = await fetch(
@@ -217,7 +207,7 @@ const getGuide = async () => {
   let onAir = results.data.onair.slot;
 
   results.data.guide.forEach((slot) => {
-    tmp = sortOutOffset(slot); 
+    tmp = sortOutOffset(slot);
     jQuery(
       `.${tmp.weekday_start}_hour_${tmp.hour_start}_${slot.minute_start}`
     ).append(
@@ -226,20 +216,26 @@ const getGuide = async () => {
       } ${slot.id === onAir.id && "onair"}"><div>${slot.program.name}  
         </div></a>`
     );
-      let ep = ''
-    if(slot.episodes.length > 0){
-      // https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/5ebi/aac_96/2022-03-24T17:00:00+10:30/7200/playlist.m3u8?unique=website
-      // https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/5ebi/aac_96/2022-03-24T17:00:00+10:30/7200/playlist.m3u8?unique=website
-      // https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/fbi945/aac_96/2022-03-24T17:00:00+10:30/7200/playlist.m3u8?unique=website
-
-      // https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/fbi945/aac_96/2022-03-24T17:00:00+10:30/7200/playlist.m3u8?unique=website
-
-      // https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/fbi945/aac_96/2022-03-24T06:00:00+11:00/10800/playlist.m3u8?unique=website
-      // https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/5ebi/aac_96/2022-03-22T09:00:00+10:30/7200/playlist.m3u8?unique=website
-      // https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/5ebi/aac_96/2022-03-24T19:00:00+10:30/3600/playlist.m3u8?unique=website
-
+    let ep = "";
+    if (slot.episodes.length > 0) {
       let url = `https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/${station_vars.hls}/aac_96/${slot.episodes[0].local}/${slot.episodes[0].duration}/playlist.m3u8?unique=website`;
-      ep = `<div class='mr-flex'><button class="list-episode-button mr-play-audio" data-title="${slot.program.name} - ${slot.episodes[0].readable}" ${slot.program.image ? `data-image="${slot.program.image.url}"` : ``} data-url="${url}"></button> Play Latest Episode - ${slot.episodes[0].readable}</div>`;
+      if (station_vars?.react_or_not === "1") {
+        ep = `<div class='mr-flex'><button class="list-episode-button mr-play-audio" data-title="${
+          slot.program.name
+        } - ${slot.episodes[0].readable}" ${
+          slot.program.image ? `data-image="${slot.program.image.url}"` : ``
+        } data-url="${url}"></button> Play Latest Episode - ${
+          slot.episodes[0].readable
+        }</div>`;
+      } else {
+        let tmpUrl = `https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/${station_vars.hls}/aac_96/${slot.episodes[0].local}/${slot.episodes[0].duration}/playlist.m3u8?unique=website`;
+        let title = `${slot.program.name} - ${slot.episodes[0].readable}`;
+
+        let playerUrl = `url=${encodeURIComponent(
+          tmpUrl
+        )}=&title=${encodeURIComponent(title)}`;
+        ep = `<div class='mr-flex'><button class="list-episode-button mr-play-audio" data-popup="/player?${playerUrl}"></button> Play Latest Episode - ${slot.episodes[0].readable}</div>`;
+      }
     }
 
     jQuery(`.weekday${tmp.weekday_start}`).append(
@@ -250,7 +246,8 @@ const getGuide = async () => {
 			<div class='program-details'><a href="/${slot.program.slug}"><h4>${
         slot.id === onAir.id ? "<span class='online-alert'>ON AIR:</span> " : ""
       }${slot.program.name}</h4></a>
-      <p class="mr-presenter">${slot.program.presenter_string &&
+      <p class="mr-presenter">${
+        slot.program.presenter_string &&
         `${`<span>Presented by</span>:${slot.program.presenter_string} `}`
       }</p>
 				${slot.program.genre_string ? `<p>${slot.program.genre_string}</p>` : ""}
@@ -287,7 +284,11 @@ const getGuide = async () => {
     );
   }
   jQuery(".programguide").removeClass("loading");
-  initReactPlayButtons();
+  if (station_vars?.react_or_not === "1") {
+    initReactPlayButtons();
+  } else {
+    initNotReactPlayButtons();
+  }
 };
 
 //   if (station_vars) {
@@ -365,20 +366,32 @@ const initMr = async () => {
 
   jQuery(".mr-play-audio").on("click", function (e) {
     e.preventDefault();
-    console.log("here");
-    if (!this.hasAttribute("data-title")) {
-      var title = jQuery(this).text();
+    console.log("here", station_vars);
+    if (station_vars?.react_or_not === "1") {
+      if (!this.hasAttribute("data-title")) {
+        var title = jQuery(this).text();
+      } else {
+        var title = jQuery(this).data("title");
+      }
+      var image = null;
+      if (this.hasAttribute("data-image")) {
+        image = jQuery(this).data("image");
+      }
+      if (!this.hasAttribute("data-url")) {
+        load_audio(jQuery(this).attr("href"), title, image);
+      } else {
+        load_audio(jQuery(this).data("url"), title, image);
+      }
     } else {
-      var title = jQuery(this).data("title");
-    }
-    var image = null;
-    if (this.hasAttribute("data-image")) {
-      image = jQuery(this).data("image");
-    }
-    if (!this.hasAttribute("data-url")) {
-      load_audio(jQuery(this).attr("href"), title, image);
-    } else {
-      load_audio(jQuery(this).data("url"), title, image);
+      let popup = jQuery(this).data("popup");
+      newwindow = window.open(
+        `${window.location.origin}/${popup}`,
+        "name",
+        `height=700,width=700`
+      );
+      if (window.focus) {
+        newwindow.focus();
+      }
     }
   });
 };

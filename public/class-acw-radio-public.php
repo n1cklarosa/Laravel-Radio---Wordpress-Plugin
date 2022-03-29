@@ -102,6 +102,8 @@ class Acw_Radio_Public
          */
         $settings = get_option('acw_plugin_options');
         $settings['offset'] = 6;
+        $settings['react_or_not'] = MR_REACT_PLAYER == true ? true : false;
+
         if ($post->post_type === 'program'):
             wp_register_script('hls', plugin_dir_url(__FILE__) . 'js/vendor/hls.js', null, $this->version, true);
         wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-public.js', array( 'jquery', 'hls' ), $this->version, true); else:
@@ -148,6 +150,7 @@ class Acw_Radio_Public
     public function program_page_shortcode($atts)
     {
         global $post;
+
         $args = shortcode_atts(
             array(
                 'slug'   => null,
@@ -160,33 +163,33 @@ class Acw_Radio_Public
 	    echo get_the_post_thumbnail( $post->ID, 'large' );
  
         if (MR_REACT_PLAYER == true):
-        ?>
-        <?php
-        $slots = get_post_meta(get_the_ID(), 'mr_slots', true);
-        $presenters = get_post_meta(get_the_ID(), 'mr_presenters', true);
-        $intro = get_post_meta(get_the_ID(), 'mr_description', true);
-        if ($presenters):
-                        echo "<p><strong>Presented By:</strong> $presenters</p>";
-        endif;
-        if ($intro):
-                        echo wpautop($intro);
-        endif;
-        if ($slots):
-                        $slots = json_decode($slots);
-        foreach ($slots as $slot) {
-            if ($slot->readable->hours > 1) {
-                $texzt = 's';
-            } else {
-                $text = '';
+            ?>
+            <?php
+            $slots = get_post_meta(get_the_ID(), 'mr_slots', true);
+            $presenters = get_post_meta(get_the_ID(), 'mr_presenters', true);
+            $intro = get_post_meta(get_the_ID(), 'mr_description', true);
+            if ($presenters):
+                            echo "<p><strong>Presented By:</strong> $presenters</p>";
+            endif;
+            if ($intro):
+                            echo wpautop($intro);
+            endif;
+            if ($slots):
+                            $slots = json_decode($slots);
+            foreach ($slots as $slot) {
+                if ($slot->readable->hours > 1) {
+                    $texzt = 's';
+                } else {
+                    $text = '';
+                }
+                // var_dump($slot->readable);
+                echo "<p>".$slot->readable->time_start." on ".$slot->readable->day_start." for ".$slot->readable->hours. " hours".$text.'</p>';
             }
-            // var_dump($slot->readable);
-            echo "<p>".$slot->readable->time_start." on ".$slot->readable->day_start." for ".$slot->readable->hours. " hours".$text.'</p>';
-        }
-        endif;
+            endif;
 
-        // the_content();?>
-            <div id="mrreactepisodes" data-slug="<?php echo $args['slug']; ?>"></div> 
-        <?php
+            // the_content();?>
+                <div id="mrreactepisodes" data-slug="<?php echo $args['slug']; ?>"></div> 
+            <?php
         else: ?> 
             <div id="mrepisodes" data-slug="<?php echo $args['slug']; ?>"></div> 
         <?php endif;

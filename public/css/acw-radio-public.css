@@ -414,11 +414,6 @@
   justify-content: start;
 }
 
-.player-container {
-  background-color: black;
-  color: white;
-}
-
 .page-id-16 #main-header, .page-id-16 #top-header {
   display: none !important;
 }
