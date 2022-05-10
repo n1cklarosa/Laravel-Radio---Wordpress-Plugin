@@ -16,7 +16,7 @@
  * Plugin Name:       All Class Web Radio Functions
  * Plugin URI:        https://allclassweb.com
  * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
- * Version:           1.0.6
+ * Version:           1.0.7
  * Author:            Nick La Rosa
  * Author URI:        https://allclassweb.com
  * License:           GPL-2.0+
@@ -48,7 +48,7 @@ global $mr_episode_data;
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define('ACW_RADIO_VERSION', '1.0.6');
+define('ACW_RADIO_VERSION', '1.0.7');
 
 /**
  * The code that runs during plugin activation.
