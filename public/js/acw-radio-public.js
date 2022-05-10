@@ -211,7 +211,7 @@ const getGuide = async () => {
     jQuery(
       `.${tmp.weekday_start}_hour_${tmp.hour_start}_${slot.minute_start}`
     ).append(
-      `<a href="/${slot.program.slug}" class="program_slot height_${
+      `<a href="/programs/${slot.program.slug}" class="program_slot height_${
         slot.duration / 60
       } ${slot.id === onAir.id && "onair"}"><div>${slot.program.name}  
         </div></a>`
@@ -263,7 +263,7 @@ const getGuide = async () => {
     );
 
     jQuery(`.mobile_weekday_${slot.weekday_start}`).append(
-      `<a href="/${slot.program.slug}" class="program_slot_mobile ${
+      `<a href="/programs/${slot.program.slug}" class="program_slot_mobile ${
         slot.id === onAir.id && "onair"
       }"><div><span class='mobile-times'>${`${pad(slot.hour_start)}:${pad(
         slot.minute_start
