@@ -103,7 +103,7 @@ const getProgramEpisodes = async (slug) => {
     results.data.episodes.map((item, i) => {
       console.log("station", station_vars);
       // let url = `https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/${station_vars.api_key}/aac_96/${item.local}/${item.duration}/playlist.m3u8?unique=website`;
-      let url = `https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/${station_vars.hls}/aac_96/${item.local}/${item.duration}/playlist.m3u8?unique=website`;
+      let url = `https://app.myradio.click/api/public/ondemand/${station_vars.hls}/96/${item.timestamp}/${item.duration}/listen.m3u8?unique=website&source=website`;
       let title = `${results.data.name} - ${item.readable}`;
 
       let playerUrl = `url=${encodeURIComponent(
@@ -144,7 +144,7 @@ const getProgramEpisodesReact = async (slug) => {
     div.append("<h4 id='LatestEpisodes'>Latest Episodes</h4>");
     results.data.episodes.map((item, i) => {
       // let url = `https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/${station_vars.api_key}/aac_96/${item.local}/${item.duration}/playlist.m3u8?unique=website`;
-      let url = `https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/${station_vars.hls}/aac_96/${item.local}/${item.duration}/playlist.m3u8?unique=website`;
+      let url = `https://app.myradio.click/api/public/ondemand/${station_vars.hls}/aac_96/${item.timestamp}/${item.duration}/listen.m3u8?unique=website&source-website`;
       if (item.timestamp > 1646548252) {
         div.append(
           `<button class="mr-play-audio episode-row" data-title="${results?.data.name} - ${item.readable}" data-image="${results?.data?.image?.url}" data-url="${url}"><i class="fa fa-play"></i> ${item.readable}</button>`
@@ -228,7 +228,7 @@ const getGuide = async () => {
           slot.episodes[0].readable
         }</div>`;
       } else {
-        let tmpUrl = `https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/${station_vars.hls}/aac_96/${slot.episodes[0].local}/${slot.episodes[0].duration}/playlist.m3u8?unique=website`;
+        let tmpUrl = `https://app.myradio.click/api/public/ondemand/${station_vars.hls}/aac_96/${slot.episodes[0].timestamp}/${slot.episodes[0].duration}/listen.m3u8?unique=website`;
         let title = `${slot.program.name} - ${slot.episodes[0].readable}`;
 
         let playerUrl = `url=${encodeURIComponent(

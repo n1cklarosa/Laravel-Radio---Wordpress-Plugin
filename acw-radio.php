@@ -16,7 +16,7 @@
  * Plugin Name:       All Class Web Radio Functions
  * Plugin URI:        https://allclassweb.com
  * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
- * Version:           1.0.7
+ * Version:           1.0.13
  * Author:            Nick La Rosa
  * Author URI:        https://allclassweb.com
  * License:           GPL-2.0+
@@ -48,7 +48,7 @@ global $mr_episode_data;
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define('ACW_RADIO_VERSION', '1.0.7');
+define('ACW_RADIO_VERSION', '1.0.13');
 
 /**
  * The code that runs during plugin activation.
@@ -178,7 +178,7 @@ function add_code_before_content($content)
 							<button class="mr-play-audio" 
 							<?php if ($image !==null):?> data-image="<?php echo $image; ?>" <?php endif; ?> 
 							data-title="<?php echo $ep->program->name . " ". $date; ?>" 
-							data-url="https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/<?php echo $slug; ?>/aac_96/<?php echo $ep->local; ?>/<?php echo $ep->duration; ?>/playlist.m3u8?unique=website" aria-label="Play <?php echo $ep->readable; ?>">
+							data-url="https://app.myradio.click/api/public/ondemand/<?php echo $slug; ?>/96/<?php echo $ep->timestamp; ?>/<?php echo $ep->duration; ?>/listen.m3u8?unique=website&source=website" aria-label="Play <?php echo $ep->readable; ?>">
 								
 							</button>
                             <a href="<?php echo $base_link."?date=".$ep->timestamp; ?>"><p><?php echo $ep->program->name; ?></p><p><?php echo $ep->readable; ?></p></a>
