@@ -5,20 +5,22 @@ import { registerBlockType } from "@wordpress/blocks";
 import { useBlockProps } from "@wordpress/block-editor";
 
 // Register the block
-registerBlockType("myradio-click/episode-page", {
+registerBlockType("myradio-click/program-grid", {
   apiVersion: 2,
   edit: function () {
     const blockProps = useBlockProps();
     return (
       <div id="episode-list" class="episode-list" {...blockProps}>
-        <h3>Your Recent Episodes will appear here</h3>
+        <h3>Your Program Grid will appear here</h3>
       </div>
     );
   },
   save: function () {
     return (
-      <div id="episode-list" class="episode-list">
-        <h3>Episodes</h3>
+      <div id="mr-program-guide" class="programguide mr-loading">
+        <span class="load">Loading Program Guide</span>
+        <div className="desktop-program-grid"></div>
+        <div className="mobile-program-grid"></div>
       </div>
     );
   },

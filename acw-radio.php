@@ -100,6 +100,7 @@ function gutenberg_program_list_register_block()
 {
     register_block_type(__DIR__ . "/blocks/program-list");
     register_block_type(__DIR__ . "/blocks/episode-page");
+    register_block_type(__DIR__ . "/blocks/program-grid");
 }
 add_action('init', 'gutenberg_program_list_register_block');
 
@@ -146,6 +147,15 @@ function add_code_before_content($content)
     if (!$settings || !isset($settings['api_key'])) {
         return "Station Slug Not Set in config";
     }
+    if (!isset($settings['player'])) {
+        $using_player = false;
+    } else {
+        if ($settings['player'] == 'yes') {
+            $using_player = true;
+        } else {
+            $using_player = false;
+        }
+    }
 
     if (defined('MR_HLS')) :
         $slug = MR_HLS;
@@ -175,9 +185,11 @@ function add_code_before_content($content)
                     $image = $ep->program->image ? $ep->program->image->url : null;
                     $date = get_date_from_gmt(date('Y-m-d H:i:s', $ep->timestamp), MR_DATE_FORMAT); ?>
                     <div class="mr-episode-row">
-                        <button class="mr-play-audio" <?php if ($image !== null) : ?> data-image="<?php echo $image; ?>" <?php endif; ?> data-title="<?php echo $ep->program->name . " " . $date; ?>" data-url="https://app.myradio.click/api/public/ondemand/<?php echo $slug; ?>/96/<?php echo $ep->timestamp; ?>/<?php echo $ep->duration; ?>/listen.m3u8?unique=website&source=website" aria-label="Play <?php echo $ep->readable; ?>">
+                        <?php if ($using_player == true) : ?>
+                            <button class="mr-play-audio" <?php if ($image !== null) : ?> data-image="<?php echo $image; ?>" <?php endif; ?> data-title="<?php echo $ep->program->name . " " . $date; ?>" data-url="https://app.myradio.click/api/public/ondemand/<?php echo $slug; ?>/96/<?php echo $ep->timestamp; ?>/<?php echo $ep->duration; ?>/listen.m3u8?unique=website&source=website" aria-label="Play <?php echo $ep->readable; ?>">
 
-                        </button>
+                            </button>
+                        <?php endif; ?>
                         <a href="<?php echo $base_link . "?date=" . $ep->timestamp; ?>">
                             <p><?php echo $ep->program->name; ?></p>
                             <p><?php echo $ep->readable; ?></p>
@@ -279,7 +291,7 @@ function get_episode_data()
         if (!$settings || !isset($settings['api_key'])) {
             return false;
         }
-        $body = "";
+        $body = json_encode([]);
         $api_key = $settings['api_key'];
         $response = wp_remote_get('https://app.myradio.click/api/public/station/' . $api_key . '/episode/' . $date);
         if (is_array($response) && !is_wp_error($response)) {
@@ -300,6 +312,7 @@ function get_latest_episodes()
     if (!$settings || !isset($settings['api_key'])) {
         return false;
     }
+    $body = json_encode([]);
     $api_key = $settings['api_key'];
     $response = wp_remote_get('https://app.myradio.click/api/public/station/' . $api_key . '/recent?page=' . $offset);
     if (is_array($response) && !is_wp_error($response)) {

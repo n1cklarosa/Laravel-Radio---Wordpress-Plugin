@@ -153,6 +153,8 @@ class Acw_Radio_Admin
         add_settings_field('acw_plugin_setting_api_key', 'API Key', [$this, 'acw_plugin_setting_api_key'], 'acw_plugin', 'api_settings');
         add_settings_field('acw_plugin_setting_hls', 'HLS Slug', [$this, 'acw_plugin_setting_hls'], 'acw_plugin', 'api_settings');
         add_settings_field('acw_plugin_setting_icecast', 'Icecast URL', [$this, 'acw_plugin_setting_icecast'], 'acw_plugin', 'api_settings');
+        add_settings_field('acw_plugin_setting_player', 'Show Player', [$this, 'acw_plugin_setting_player'], 'acw_plugin', 'api_settings');
+        add_settings_field('acw_plugin_setting_pgstart', 'Grid Start Hour', [$this, 'acw_plugin_setting_pgstart'], 'acw_plugin', 'api_settings');
     }
 
     public function acw_plugin_options_validate($input)
@@ -188,6 +190,35 @@ class Acw_Radio_Admin
     {
         $options = get_option('acw_plugin_options');
         echo "<input id='acw_plugin_setting_icecast' name='acw_plugin_options[icecast]' type='text' value='" . esc_attr($options['icecast']) . "' />";
+    }
+
+
+    public function acw_plugin_setting_pgstart()
+    {
+        $options = get_option('acw_plugin_options');
+        $value = isset($options['pgstart']) ? $options['pgstart'] : 6;
+        echo "<input id='acw_plugin_setting_icecast' name='acw_plugin_options[pgstart]' min=\"0\" max=\"10\" type='number' value='" . esc_attr($value) . "' /> am
+            <p>Choose your start hour for the program grid. It is best to pick a time where you have a program starting at that time every day. (eg. 6). As it stands, the grid can only begin</p>
+        ";
+    }
+
+    public function acw_plugin_setting_player()
+    {
+        $options = get_option('acw_plugin_options');
+        $yes = "";
+        $no = "selected";
+
+        if (isset($options['player'])) :
+            if ($options['player'] == "yes") {
+                $yes = 'selected';
+                $no = "";
+            } else {
+                $no = 'selected';
+            }
+        endif;
+        echo "<select id='acw_plugin_setting_player' name='acw_plugin_options[player]' type='text'  >
+        <option value=\"yes\" $yes>Yes</option>
+        <option value=\"no\" $no>No</option></select>";
     }
 
 

@@ -1,8 +1,8 @@
 {
   "apiVersion": 2,
-  "name": "myradio-click/episode-page",
-  "title": "Episode Page",
+  "name": "myradio-click/program-grid",
+  "title": "Program Grid",
   "icon": "universal-access-alt",
-  "category": "layout",
+  "category": "myradio",
   "editorScript": "file:./build/index.js"
 }

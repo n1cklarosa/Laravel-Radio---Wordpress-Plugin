@@ -152,20 +152,26 @@ __webpack_require__.r(__webpack_exports__);
 
  // Register the block
 
-(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__.registerBlockType)("myradio-click/episode-page", {
+(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__.registerBlockType)("myradio-click/program-grid", {
   apiVersion: 2,
   edit: function () {
     const blockProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__.useBlockProps)();
     return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({
       id: "episode-list",
       class: "episode-list"
-    }, blockProps), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("h3", null, "Your Recent Episodes will appear here"));
+    }, blockProps), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("h3", null, "Your Program Grid will appear here"));
   },
   save: function () {
     return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", {
-      id: "episode-list",
-      class: "episode-list"
-    }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("h3", null, "Episodes"));
+      id: "mr-program-guide",
+      class: "programguide mr-loading"
+    }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("span", {
+      class: "load"
+    }, "Loading Program Guide"), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", {
+      className: "desktop-program-grid"
+    }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", {
+      className: "mobile-program-grid"
+    }));
   }
 }); //  /**
 //  * WordPress dependencies

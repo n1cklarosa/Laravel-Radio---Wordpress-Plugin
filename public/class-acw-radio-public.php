@@ -102,7 +102,20 @@ class Acw_Radio_Public
          * class.
          */
         $settings = get_option('acw_plugin_options');
-        $settings['offset'] = 6;
+        if (isset($settings['pgstart'])) {
+            $settings['offset'] = (int) $settings['pgstart'];
+        } else {
+            $settings['offset'] = 6;
+        }
+        if (isset($settings['player'])) :
+            if ($settings['player'] == 'yes') :
+                $settings['react_or_not'] = true;
+            else :
+                $settings['react_or_not'] = false;
+            endif;
+        else :
+            $settings['react_or_not'] = false;
+        endif;
         $settings['react_or_not'] = MR_REACT_PLAYER == true ? true : false;
 
         if ($post->post_type === 'program') :
@@ -112,9 +125,14 @@ class Acw_Radio_Public
             wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-public.js', array('jquery'), $this->version, true);
         endif;
 
-        if (MR_REACT_PLAYER == true) :
-            wp_register_script($this->plugin_name . "-react-runtime", plugin_dir_url(__FILE__) . 'assets/js/runtime.js', null, $this->version, true);
-            wp_register_script($this->plugin_name . "-react-main", plugin_dir_url(__FILE__) . 'assets/js/main.js', null, $this->version, true);
+        if (isset($settings['player'])) :
+            if ($settings['player'] == 'yes') :
+                wp_register_script($this->plugin_name . "-react-runtime", plugin_dir_url(__FILE__) . 'assets/js/runtime.js', null, $this->version, true);
+                wp_register_script($this->plugin_name . "-react-main", plugin_dir_url(__FILE__) . 'assets/js/main.js', null, $this->version, true);
+            else :
+                wp_register_script($this->plugin_name . "-react-single-runtime", plugin_dir_url(__FILE__) . 'react/single_player/assets/js/runtime.js', null, $this->version, true);
+                wp_register_script($this->plugin_name . "-react-single-main", plugin_dir_url(__FILE__) . 'react/single_player/assets/js/main.js', null, $this->version, true);
+            endif;
         else :
             wp_register_script($this->plugin_name . "-react-single-runtime", plugin_dir_url(__FILE__) . 'react/single_player/assets/js/runtime.js', null, $this->version, true);
             wp_register_script($this->plugin_name . "-react-single-main", plugin_dir_url(__FILE__) . 'react/single_player/assets/js/main.js', null, $this->version, true);
@@ -163,7 +181,6 @@ class Acw_Radio_Public
         );
         ob_start();
 
-        var_dump("$hello");
         echo get_the_post_thumbnail($post->ID, 'large');
 
         if (MR_REACT_PLAYER == true) :
@@ -182,7 +199,7 @@ class Acw_Radio_Public
                 $slots = json_decode($slots);
                 foreach ($slots as $slot) {
                     if ($slot->readable->hours > 1) {
-                        $texzt = 's';
+                        $text = 's';
                     } else {
                         $text = '';
                     }
@@ -212,7 +229,12 @@ class Acw_Radio_Public
             ),
             $atts
         );
-        $offset = 6;
+        $settings = get_option('acw_plugin_options');
+        if (isset($settings['pgstart'])) {
+            $offset = (int) $settings['pgstart'];
+        } else {
+            $offset = 6;
+        }
         $weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         ob_start();
         $cnt = 0;
@@ -250,7 +272,6 @@ class Acw_Radio_Public
         return $var;
     }
 
-
     public function shortcode_function($atts)
     {
         $args = shortcode_atts(
@@ -260,14 +281,19 @@ class Acw_Radio_Public
             ),
             $atts
         );
-        $offset = 6;
+        $settings = get_option('acw_plugin_options');
+        if (isset($settings['pgstart'])) {
+            $offset = (int) $settings['pgstart'];
+        } else {
+            $offset = 6;
+        }
+
+
         $weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
-
         $time_divs = "<div class='time-slots'> <div class='height_60'></div>";
 
         for ($i = 0; $i < 24; $i++) {
-            $altered = $i - $offset;
+            $altered = $i - (12 - $offset);
             if ($altered < 0) {
                 $altered = $altered + 24;
             }
@@ -304,13 +330,18 @@ class Acw_Radio_Public
         }
 
 
-        $var = "<div class='programguide loading'><span class='load'>Loading Program Guide</span>
-            <div class='desktop-program-grid'>
-            " . $time_divs . "
-            " . $weekDays . "
-            </div>
-            <div id='mobile-program-grid' class='mobile-program-grid'>$weekDaysMobile</div>
-        </div>";
+        // $var = "<div class='programguide loading'><span class='load'>Loading Program Guide</span>
+        //     <div class='desktop-program-grid'>
+        //     " . $time_divs . "
+        //     " . $weekDays . "
+        //     </div>
+        //     <div id='mobile-program-grid' class='mobile-program-grid'>$weekDaysMobile</div>
+        // </div>";
+        $var = '<div id="mr-program-guide" class="programguide mr-loading">
+        <span class="load">Loading Program Guide</span>
+        <div class="desktop-program-grid"></div>
+        <div class="mobile-program-grid"></div>
+      </div>';
         return $var;
     }
 

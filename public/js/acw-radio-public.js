@@ -50,7 +50,7 @@ const sortOutOffset = (thisSlot) => {
   let newSlot = { ...thisSlot };
   let weekday = thisSlot.weekday_start;
   let start = thisSlot.hour_start;
-  start = start - parseInt(station_vars.offset);
+  start = start - -parseInt(station_vars.offset);
   if (start > 23) {
     start = start - 24;
     weekday++;
@@ -144,7 +144,7 @@ const getProgramEpisodesReact = async (slug) => {
     div.append("<h4 id='LatestEpisodes'>Latest Episodes</h4>");
     results.data.episodes.map((item, i) => {
       // let url = `https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/${station_vars.api_key}/aac_96/${item.local}/${item.duration}/playlist.m3u8?unique=website`;
-      let url = `https://app.myradio.click/api/public/ondemand/${station_vars.hls}/aac_96/${item.timestamp}/${item.duration}/listen.m3u8?unique=website&source-website`;
+      let url = `https://app.myradio.click/api/public/ondemand/${station_vars.hls}/96/${item.timestamp}/${item.duration}/listen.m3u8?unique=website&source-website`;
       if (item.timestamp > 1646548252) {
         div.append(
           `<button class="mr-play-audio episode-row" data-title="${results?.data.name} - ${item.readable}" data-image="${results?.data?.image?.url}" data-url="${url}"><i class="fa fa-play"></i> ${item.readable}</button>`
@@ -181,7 +181,7 @@ const initReactPlayButtons = async () => {
 };
 const initNotReactPlayButtons = async () => {
   jQuery(".mr-play-audio").on("click", function (e) {
-    e.preventDefault(); 
+    e.preventDefault();
     let popup = jQuery(this).data("popup");
     newwindow = window.open(
       `${window.location.origin}/${popup}`,
@@ -198,9 +198,80 @@ const getGuide = async () => {
   // const response = await fetch(
   //   `https://app.myradio.click/api/public/station/${station_vars.api_key}/guide`
   // );
+
+  const weekdays = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+
+  const offset = parseInt(station_vars.offset ? station_vars.offset : 0);
+
+  const desktopDiv = jQuery(".desktop-program-grid");
+  desktopDiv.append("<div class='time-slots'></div>");
+  jQuery(".time-slots").append("<div class='height_60'></div>");
+  let altered;
+  let pm;
+  let newTime;
+  for (i = 0; i < 24; i++) {
+    altered = i - (12 - offset);
+    if (altered < 0) {
+      altered = altered + 24;
+    }
+
+    pm = altered >= 12 ? "am" : "pm";
+    // $pm = $altered >= 12 ? "pm" : "am";
+    newTime = altered >= 12 ? altered - 12 : altered;
+    if (newTime === 0) {
+      newTime = 12;
+    }
+    jQuery(".time-slots").append(
+      `<div class='time_slot height_60 hour_${i}'>${newTime}${pm}</div>`
+    );
+  }
+
+  let $weekDays = "";
+  let $slot_divs;
+  for ($i = 0; $i < 7; $i++) {
+    $weekDays = "";
+    $slot_divs = "<div class='slot-slots'>";
+    for ($j = 0; $j < 24; $j++) {
+      $slot_divs =
+        $slot_divs +
+        `<div class='slot_slot height_30 ${$i}_hour_` +
+        $j +
+        "_0'></div>";
+      $slot_divs =
+        $slot_divs +
+        `<div class='slot_slot height_30 ${$i}_hour_` +
+        $j +
+        "_30'> </div>";
+    }
+    $slot_divs = $slot_divs + "</div>";
+
+    $weekDays =
+      $weekDays +
+      "<div class='grid-weekday'><div class='weekday-heading height_60'>" +
+      weekdays[$i] +
+      "</div><div class='weekday-container weekday_" +
+      $i +
+      "'>" +
+      $slot_divs +
+      "</div></div>";
+    jQuery(".desktop-program-grid").append($weekDays);
+  }
+  console.log(`All Done`);
+
+  // jQuery(".programguide").removeClass("loading");
+  // return;
   const response = await fetch(
     `https://radio-online.nyc3.digitaloceanspaces.com/cached/stations/${station_vars.api_key}/${station_vars.api_key}-guide.json`
   );
+  console.log("started calls for api");
   const results = await response.json();
   let tmp;
 
@@ -208,6 +279,10 @@ const getGuide = async () => {
 
   results.data.guide.forEach((slot) => {
     tmp = sortOutOffset(slot);
+    console.log(
+      `.${tmp.weekday_start}_hour_${tmp.hour_start}_${slot.minute_start}`,
+      tmp
+    );
     jQuery(
       `.${tmp.weekday_start}_hour_${tmp.hour_start}_${slot.minute_start}`
     ).append(
@@ -218,7 +293,9 @@ const getGuide = async () => {
     );
     let ep = "";
     if (slot.episodes.length > 0) {
-      let url = `https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/${station_vars.hls}/aac_96/${slot.episodes[0].local}/${slot.episodes[0].duration}/playlist.m3u8?unique=website`;
+      // let url = `https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/${station_vars.hls}/aac_96/${slot.episodes[0].local}/${slot.episodes[0].duration}/playlist.m3u8?unique=website`;
+      let url = `https://app.myradio.click/api/public/ondemand/${station_vars.hls}/96/${slot.episodes[0].timestamp}/${slot.episodes[0].duration}/listen.m3u8?unique=website`;
+
       if (station_vars?.react_or_not === "1") {
         ep = `<div class='mr-flex'><button class="list-episode-button mr-play-audio" data-title="${
           slot.program.name
@@ -228,7 +305,7 @@ const getGuide = async () => {
           slot.episodes[0].readable
         }</div>`;
       } else {
-        let tmpUrl = `https://app.myradio.click/api/public/ondemand/${station_vars.hls}/aac_96/${slot.episodes[0].timestamp}/${slot.episodes[0].duration}/listen.m3u8?unique=website`;
+        let tmpUrl = `https://app.myradio.click/api/public/ondemand/${station_vars.hls}/96/${slot.episodes[0].timestamp}/${slot.episodes[0].duration}/listen.m3u8?unique=website`;
         let title = `${slot.program.name} - ${slot.episodes[0].readable}`;
 
         let playerUrl = `url=${encodeURIComponent(
@@ -283,7 +360,7 @@ const getGuide = async () => {
       (item) => item.weekday_start === index
     );
   }
-  jQuery(".programguide").removeClass("loading");
+  jQuery(".programguide").removeClass("mr-loading");
   if (station_vars?.react_or_not === "1") {
     initReactPlayButtons();
   } else {

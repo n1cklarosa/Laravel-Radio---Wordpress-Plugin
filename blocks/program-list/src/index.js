@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { registerBlockType } from "@wordpress/blocks";
+import { useBlockProps } from "@wordpress/block-editor";
 
 // Register the block
 registerBlockType("myradio-click/program-list", {
@@ -18,38 +19,11 @@ registerBlockType("myradio-click/program-list", {
 
     const d = new Date();
     let day = d.getDay();
+    const blockProps = useBlockProps();
 
     return (
-      <div id="program-list" class="program-list">
-        <div class="program-list-wrapper">
-          <div class="days-list">
-            <ul class="weekday-toggles">
-              {$weekdays.map((item, i) => (
-                <li key={`listeitem${i}`}>
-                  <button
-                    class={`weekday-toggle weekday-toggle${i} ${
-                      i === day ? "active" : ""
-                    }`}
-                    data-day={i}
-                  >
-                    {item}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div class="program-list-programs">
-            `
-            {$weekdays.map((item, i) => (
-              <div
-                key={`dayitem${i}`}
-                class={`weekday-list ${i === day ? "active" : ""} weekday${i}`}
-              >
-                {" "}
-              </div>
-            ))}
-          </div>
-        </div>
+      <div id="program-list" class="program-list" {...blockProps}>
+        Your programs will appear here
       </div>
     );
   },

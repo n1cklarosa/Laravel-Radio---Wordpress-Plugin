@@ -26,6 +26,7 @@
 		"start": "wp-scripts start"
 	},
 	"dependencies": {
-		"@wordpress/api-fetch": "^6.0.1"
+		"@wordpress/api-fetch": "^6.0.1",
+		"@wordpress/block-editor": "^9.7.0"
 	}
 }
