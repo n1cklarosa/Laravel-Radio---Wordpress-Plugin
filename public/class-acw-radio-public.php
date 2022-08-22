@@ -75,7 +75,10 @@ class Acw_Radio_Public
          */
 
         wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/acw-radio-public.css', array(), $this->version, 'all');
-        wp_enqueue_style($this->plugin_name."-react", plugin_dir_url(__FILE__) . 'assets/css/main.chunk.css', array(), $this->version, 'all');
+        if (MR_REACT_PLAYER == true):
+        wp_enqueue_style($this->plugin_name."-react", plugin_dir_url(__FILE__) . 'assets/css/main.chunk.css', array(), $this->version, 'all'); else:
+            wp_enqueue_style($this->plugin_name."-react-single", plugin_dir_url(__FILE__) . 'react/single_player/assets/css/main.chunk.css', array(), $this->version, 'all');
+        endif;
     }
 
     /**
@@ -85,7 +88,7 @@ class Acw_Radio_Public
      */
     public function enqueue_scripts()
     {
-
+        global $post;
         /**
          * This function is provided for demonstration purposes only.
          *
@@ -99,18 +102,102 @@ class Acw_Radio_Public
          */
         $settings = get_option('acw_plugin_options');
         $settings['offset'] = 6;
-        wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-public.js', array( 'jquery' ), $this->version, true);
-        wp_register_script($this->plugin_name."-react-runtime", plugin_dir_url(__FILE__) . 'assets/js/runtime.js', null, $this->version, true);
-        wp_register_script($this->plugin_name."-react-main", plugin_dir_url(__FILE__) . 'assets/js/main.js', null, $this->version, true);
+        $settings['react_or_not'] = MR_REACT_PLAYER == true ? true : false;
+
+        if ($post->post_type === 'program'):
+            wp_register_script('hls', plugin_dir_url(__FILE__) . 'js/vendor/hls.js', null, $this->version, true);
+        wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-public.js', array( 'jquery', 'hls' ), $this->version, true); else:
+            wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-public.js', array( 'jquery'  ), $this->version, true);
+        endif;
+       
+        if (MR_REACT_PLAYER == true):
+            wp_register_script($this->plugin_name."-react-runtime", plugin_dir_url(__FILE__) . 'assets/js/runtime.js', null, $this->version, true);
+        wp_register_script($this->plugin_name."-react-main", plugin_dir_url(__FILE__) . 'assets/js/main.js', null, $this->version, true); else:
+            wp_register_script($this->plugin_name."-react-single-runtime", plugin_dir_url(__FILE__) . 'react/single_player/assets/js/runtime.js', null, $this->version, true);
+        wp_register_script($this->plugin_name."-react-single-main", plugin_dir_url(__FILE__) . 'react/single_player/assets/js/main.js', null, $this->version, true);
+        endif;
         // wp_register_script($this->plugin_name."-react", plugin_dir_url(__FILE__) . 'assets/js/main.js', array( 'jquery' ), $this->version, true);
         $dataToBePassed = $settings;
         wp_localize_script($this->plugin_name, 'station_vars', $dataToBePassed);
+        if ($post->post_type === 'program'):
+            wp_enqueue_script('hls');
+        endif;
         wp_enqueue_script($this->plugin_name);
-        wp_enqueue_script($this->plugin_name."-react-runtime");
-        wp_enqueue_script($this->plugin_name."-react-main");
+        if (MR_REACT_PLAYER == true):
+            wp_enqueue_script($this->plugin_name."-react-runtime");
+        wp_enqueue_script($this->plugin_name."-react-main"); else:
+            if ($post) {
+                if ($post->ID == 16):
+                    wp_enqueue_script($this->plugin_name."-react-single-runtime");
+                wp_enqueue_script($this->plugin_name."-react-single-main");
+                endif;
+            }
+        endif;
+    }
+
+    public function add_vars_to_windows()
+    {
+        $settings = get_option('acw_plugin_options'); ?>
+        <script>
+            window.stream_url = "<?php echo isset($settings['icecast']) ? $settings['icecast'] : ""; ?>"
+            window.station_slug = "<?php echo isset($settings['api_key']) ? $settings['api_key'] : ""; ?>"
+            window.station_hls = "<?php echo isset($settings['hls']) ? $settings['hls'] : ""; ?>"
+        </script>
+        <?php
     }
 
      
+    public function program_page_shortcode($atts)
+    {
+        global $post;
+
+        $args = shortcode_atts(
+            array(
+                'slug'   => null,
+            ),
+            $atts
+        );
+        ob_start();
+
+
+	    echo get_the_post_thumbnail( $post->ID, 'large' );
+ 
+        if (MR_REACT_PLAYER == true):
+            ?>
+            <?php
+            $slots = get_post_meta(get_the_ID(), 'mr_slots', true);
+            $presenters = get_post_meta(get_the_ID(), 'mr_presenters', true);
+            $intro = get_post_meta(get_the_ID(), 'mr_description', true);
+            if ($presenters):
+                            echo "<p><strong>Presented By:</strong> $presenters</p>";
+            endif;
+            if ($intro):
+                            echo wpautop($intro);
+            endif;
+            if ($slots):
+                            $slots = json_decode($slots);
+            foreach ($slots as $slot) {
+                if ($slot->readable->hours > 1) {
+                    $texzt = 's';
+                } else {
+                    $text = '';
+                }
+                // var_dump($slot->readable);
+                echo "<p>".$slot->readable->time_start." on ".$slot->readable->day_start." for ".$slot->readable->hours. " hours".$text.'</p>';
+            }
+            endif;
+
+            // the_content();?>
+                <div id="mrreactepisodes" data-slug="<?php echo $args['slug']; ?>"></div> 
+            <?php
+        else: ?> 
+            <div id="mrepisodes" data-slug="<?php echo $args['slug']; ?>"></div> 
+        <?php endif;
+
+        $var = ob_get_clean();
+        return $var;
+    }
+
     public function episode_list_shortcode($atts)
     {
         $args = shortcode_atts(
@@ -122,20 +209,29 @@ class Acw_Radio_Public
         );
         $offset = 6;
         $weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        ob_start();  $cnt = 0; $weekday = date("w") ?>
+        ob_start();
+        $cnt = 0;
+        $weekday = date("w");
+            // var_dump($weekday);
+            
+        ?>
 
         <div id="program-list" class="program-list">
             <div class="program-list-wrapper">
                 <div class="days-list">
                     <ul class='weekday-toggles'>
                     <?php foreach ($weekdays as $key => $value) { ?>
-                        <li><button class='weekday-toggle weekday-toggle<?php echo $key; ?>  <?php if($weekday == $key) { echo "active"; }?>' data-day="<?php echo $key; ?>"><?php echo $value; ?></button></li> 
+                        <li><button class='weekday-toggle weekday-toggle<?php echo $key; ?>  <?php if ($weekday == $key) {
+            echo "active";
+        }?>' data-day="<?php echo $key; ?>"><?php echo $value; ?></button></li> 
                     <?php $cnt++; } ?>
                     </ul>
                 </div>
                 <div class="program-list-programs">
                     <?php foreach ($weekdays as $key => $value) { ?>
-                        <div class="weekday-list <?php if($weekday == $key) { echo "active"; }?> weekday<?php echo $key; ?>"> </div> 
+                        <div class="weekday-list <?php if ($weekday == $key) {
+            echo "active";
+        }?> weekday<?php echo $key; ?>"> </div> 
                     <?php $cnt++; } ?>
                 </div>
             </div>
@@ -216,10 +312,10 @@ class Acw_Radio_Public
     /**
      * Remove the slug from published post permalinks. Only affect our custom post type, though.
      */
-    public function gp_remove_cpt_slug( $post_link, $post ) {
-
-        if ( 'program' === $post->post_type && 'publish' === $post->post_status ) {
-            $post_link = str_replace( '/' . $post->post_type . '/', '/', $post_link );
+    public function gp_remove_cpt_slug($post_link, $post)
+    {
+        if ('program' === $post->post_type && 'publish' === $post->post_status) {
+            $post_link = str_replace('/' . $post->post_type . '/', '/', $post_link);
         }
 
         return $post_link;
@@ -232,25 +328,25 @@ class Acw_Radio_Public
      *
      * @param $query The current query.
      */
-    function gp_add_cpt_post_names_to_main_query( $query ) {
+    public function gp_add_cpt_post_names_to_main_query($query)
+    {
 
         // Bail if this is not the main query.
-        if ( ! $query->is_main_query() ) {
+        if (! $query->is_main_query()) {
             return;
         }
 
         // Bail if this query doesn't match our very specific rewrite rule.
-        if ( ! isset( $query->query['page'] ) || 2 !== count( $query->query ) ) {
+        if (! isset($query->query['page']) || 2 !== count($query->query)) {
             return;
         }
 
         // Bail if we're not querying based on the post name.
-        if ( empty( $query->query['name'] ) ) {
+        if (empty($query->query['name'])) {
             return;
         }
 
         // Add CPT to the list of post types WP will include when it queries based on the post name.
-        $query->set( 'post_type', array( 'post', 'page', 'program' ) );
+        $query->set('post_type', array( 'post', 'page', 'program' ));
     }
-
 }

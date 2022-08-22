@@ -205,6 +205,7 @@ class Acw_Radio
     {
         $plugin_public = new Acw_Radio_Public($this->get_plugin_name(), $this->get_version());
 
+        $this->loader->add_action('wp_head', $plugin_public, 'add_vars_to_windows');
         $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
         $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
         $this->loader->add_filter("post_type_link", $plugin_public, "gp_remove_cpt_slug", 10, 2); 
@@ -219,6 +220,7 @@ class Acw_Radio
          */
         $this->loader->add_shortcode("programguide", $plugin_public, "shortcode_function", $priority = 10);
         $this->loader->add_shortcode("programlist", $plugin_public, "episode_list_shortcode", $priority = 10);
+        $this->loader->add_shortcode("show_program", $plugin_public, "program_page_shortcode", $priority = 10);
     }
 
     /**

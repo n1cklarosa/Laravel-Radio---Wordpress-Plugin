@@ -16,7 +16,7 @@
  * Plugin Name:       All Class Web Radio Functions
  * Plugin URI:        https://allclassweb.com
  * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
- * Version:           1.0.0
+ * Version:           1.0.16
  * Author:            Nick La Rosa
  * Author URI:        https://allclassweb.com
  * License:           GPL-2.0+
@@ -34,13 +34,21 @@ define('MR_API_URL', 'https://app.myradio.click/api');
 define('MR_HLS_URL', 'https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration');
 define('MR_DATE_FORMAT', 'l, j F, Y');
 
+if (!defined('MR_REACT_PLAYER')):
+    define('MR_REACT_PLAYER', true);
+endif;
+
+if (!defined('MR_GRID_DROPDOWN')):
+    define('MR_GRID_DROPDOWN', false);
+endif;
+
 global $mr_episode_data;
 /**
  * Currently plugin version.
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define('ACW_RADIO_VERSION', '1.0.0');
+define('ACW_RADIO_VERSION', '1.0.16');
 
 /**
  * The code that runs during plugin activation.
@@ -138,6 +146,12 @@ function add_code_before_content($content)
     if (!$settings || !isset($settings['api_key'])) {
         return "Station Slug Not Set in config";
     }
+
+    if (defined('MR_HLS')):
+        $slug = MR_HLS;
+    else:
+        $slug = $settings['api_key'];
+    endif;
     $var = '';
     if ($acuity_page != false) {
         if (!$mr_episode_data) {
@@ -146,7 +160,8 @@ function add_code_before_content($content)
 
         if ($mr_episode_data === false) {
             ob_start();
-            $results = get_latest_episodes(); 
+            echo $slug;
+            $results = get_latest_episodes();
             if (isset($results->data)) {
                 $episodes = $results->data;
             } else {
@@ -159,14 +174,14 @@ function add_code_before_content($content)
             foreach ($episodes as $key => $ep) {
                 $image = $ep->program->image ? $ep->program->image->url : null;
                 $date = get_date_from_gmt(date('Y-m-d H:i:s', $ep->timestamp), MR_DATE_FORMAT) ; ?>
-						<div class="mr-episode-row">
-							<a href="<?php echo $base_link."?date=".$ep->timestamp; ?>"><?php echo $ep->program->name; ?></a>
+						<div class="mr-episode-row"> 
 							<button class="mr-play-audio" 
 							<?php if ($image !==null):?> data-image="<?php echo $image; ?>" <?php endif; ?> 
 							data-title="<?php echo $ep->program->name . " ". $date; ?>" 
-							data-url="https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/<?php echo $settings['api_key']; ?>/aac_96/<?php echo $ep->local; ?>/<?php echo $ep->duration; ?>/playlist.m3u8?unique=website">
-								Play
+							data-url="https://app.myradio.click/api/public/ondemand/<?php echo $slug; ?>/96/<?php echo $ep->timestamp; ?>/<?php echo $ep->duration; ?>/listen.m3u8?unique=website&source=website" aria-label="Play <?php echo $ep->readable; ?>">
+								
 							</button>
+                            <a href="<?php echo $base_link."?date=".$ep->timestamp; ?>"><p><?php echo $ep->program->name; ?></p><p><?php echo $ep->readable; ?></p></a>
 						</div>
 					 <?php
             } ?>
@@ -265,6 +280,7 @@ function get_episode_data()
         if (!$settings || !isset($settings['api_key'])) {
             return false;
         }
+ 
         $api_key = $settings['api_key'];
         $response = wp_remote_get('https://app.myradio.click/api/public/station/'.$api_key.'/episode/'.$date);
         if (is_array($response) && ! is_wp_error($response)) {
@@ -294,16 +310,18 @@ function get_latest_episodes()
     return json_decode($body);
 }
 
- 
-add_action('wp_body_open', 'wpdoc_add_custom_body_open_code');
- 
-function wpdoc_add_custom_body_open_code()
-{
-    echo '<div class="mr-site-wrapper"><div class="mr-site-content-wrapper">';
-}
+if (MR_REACT_PLAYER == true):
+        
+    add_action('wp_body_open', 'wpdoc_add_custom_body_open_code');
+    
+    function wpdoc_add_custom_body_open_code()
+    {
+        echo '<div class="mr-site-wrapper"><div class="mr-site-content-wrapper">';
+    }
 
-function prefix_footer_code()
-{
-    echo '</div><div class="root-mr" id="root-mr"></div></div>';
-}
-add_action('wp_footer', 'prefix_footer_code');
+    function prefix_footer_code()
+    {
+        echo '</div><div class="root-mr" id="root-mr"></div></div>';
+    }
+    add_action('wp_footer', 'prefix_footer_code');
+endif;

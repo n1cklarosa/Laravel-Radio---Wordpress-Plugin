@@ -99,7 +99,7 @@ class Acw_Radio_Admin
 
         $settings = get_option('acw_plugin_options');
 
-        wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-admin.js', array( 'jquery' ), $this->version, false);
+        wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-admin.js', array('jquery'), $this->version, false);
         wp_enqueue_script($this->plugin_name);
         /**
          *  In backend there is global ajaxurl variable defined by WordPress itself.
@@ -112,15 +112,15 @@ class Acw_Radio_Admin
          * You could also pass this datas with the "data" attribute somewhere in your form.
          */
         wp_localize_script($this->plugin_name, 'wp_ajax', array(
-        'ajax_url' => admin_url('admin-ajax.php'),
-        /**
-         * Create nonce for security.
-         *
-         * @link https://codex.wordpress.org/Function_Reference/wp_create_nonce
-         */
-        '_nonce' => wp_create_nonce('any_value_here'),
+            'ajax_url' => admin_url('admin-ajax.php'),
+            /**
+             * Create nonce for security.
+             *
+             * @link https://codex.wordpress.org/Function_Reference/wp_create_nonce
+             */
+            '_nonce' => wp_create_nonce('any_value_here'),
 
-    ));
+        ));
     }
 
     public function acw_add_settings_page()
@@ -130,24 +130,29 @@ class Acw_Radio_Admin
 
     public function acw_render_plugin_settings_page()
     {
-        ?>
-		<h2>Radio Plugin Settings</h2>
-		<form action="options.php" method="post">
-			<?php
+?>
+        <h2>Radio Plugin Settings</h2>
+        <form action="options.php" method="post">
+            <?php
             settings_fields('acw_plugin_options');
-        do_settings_sections('acw_plugin'); ?>
-			<input name="submit" class="button button-primary" type="submit" value="<?php esc_attr_e('Save'); ?>" />
-		</form>
-		<button style="margin-top:40px;" class='reload-programs button button-primar'>Reload Programs from API</button>
-		<?php
+
+            do_settings_sections('acw_plugin'); ?>
+            <input name="submit" class="button button-primary" type="submit" value="<?php esc_attr_e('Save'); ?>" />
+        </form>
+        <button style="margin-top:40px;" class='reload-programs button button-primar'>Reload Programs from API</button>
+        <div id="mrloading"></div>
+        <div id="mrresults"></div>
+<?php
     }
 
     public function acw_register_settings()
     {
         register_setting('acw_plugin_options', 'acw_plugin_options', [$this, 'acw_plugin_options_validate']);
         add_settings_section('api_settings', 'API Settings', [$this, 'acw_plugin_section_text'], 'acw_plugin');
-    
+
         add_settings_field('acw_plugin_setting_api_key', 'API Key', [$this, 'acw_plugin_setting_api_key'], 'acw_plugin', 'api_settings');
+        add_settings_field('acw_plugin_setting_hls', 'HLS Slug', [$this, 'acw_plugin_setting_hls'], 'acw_plugin', 'api_settings');
+        add_settings_field('acw_plugin_setting_icecast', 'Icecast URL', [$this, 'acw_plugin_setting_icecast'], 'acw_plugin', 'api_settings');
     }
 
     public function acw_plugin_options_validate($input)
@@ -156,7 +161,7 @@ class Acw_Radio_Admin
         // if ( ! preg_match( '/^[a-z0-9]{32}$/i', $newinput['api_key'] ) ) {
         // 	$newinput['api_key'] = '';
         // }
-    
+
         return $input;
     }
 
@@ -172,15 +177,19 @@ class Acw_Radio_Admin
         echo "<input id='acw_plugin_setting_api_key' name='acw_plugin_options[api_key]' type='text' value='" . esc_attr($options['api_key']) . "' />";
     }
 
-    // public function acw_plugin_setting_results_limit() {
-    // 	$options = get_option( 'acw_plugin_options' );
-    // 	echo "<input id='acw_plugin_setting_results_limit' name='acw_plugin_options[results_limit]' type='text' value='" . esc_attr( $options['results_limit'] ) . "' />";
-    // }
+    public function acw_plugin_setting_hls()
+    {
+        $options = get_option('acw_plugin_options');
+        echo "<input id='acw_plugin_setting_hls' name='acw_plugin_options[hls]' type='text' value='" . esc_attr($options['hls']) . "' />";
+    }
 
-    // public function acw_plugin_setting_start_date() {
-    // 	$options = get_option( 'acw_plugin_options' );
-    // 	echo "<input id='acw_plugin_setting_start_date' name='acw_plugin_options[start_date]' type='text' value='" . esc_attr( $options['start_date'] ) . "' />";
-    // }
+
+    public function acw_plugin_setting_icecast()
+    {
+        $options = get_option('acw_plugin_options');
+        echo "<input id='acw_plugin_setting_icecast' name='acw_plugin_options[icecast]' type='text' value='" . esc_attr($options['icecast']) . "' />";
+    }
+
 
 
     public function ajax_first()
@@ -190,7 +199,7 @@ class Acw_Radio_Admin
          *
          * @link https://codex.wordpress.org/Function_Reference/wp_verify_nonce
          */
-        if (! wp_verify_nonce($_POST['_nonce'], 'any_value_here')) {
+        if (!wp_verify_nonce($_POST['_nonce'], 'any_value_here')) {
             wp_send_json_error();
             die();
         }
@@ -201,60 +210,96 @@ class Acw_Radio_Admin
          * @link https://tommcfarlin.com/secure-ajax-requests-in-wordpress/
          * @link https://wordpress.stackexchange.com/questions/48110/wp-verify-nonce-vs-check-admin-referer
          */
-        if (! check_ajax_referer('any_value_here', '_nonce', false)) {
+        if (!check_ajax_referer('any_value_here', '_nonce', false)) {
             wp_send_json_error('Invalid security token sent.');
             die();
         }
+
         $settings = get_option('acw_plugin_options');
-        $response = wp_remote_get('https://app.myradio.click/api/public/station/'.$settings['api_key']);
+        $response = wp_remote_get('https://app.myradio.click/api/public/station/' . $settings['api_key'], ['timeout' => 100]);
+        if (is_wp_error($response)) {
+            error_log("error fetching programs from api " . json_encode($response->errors));
+            wp_send_json_error('error fetching programs from api');
+        }
         $decoded = json_decode($response['body']);
         $progams = $decoded->data->programs;
         $finished = [];
-        $new = []; 
-        $att = []; 
+        $new = [];
+        $att = [];
+        $all = [];
         foreach ($progams as $key => $value) {
             $existingPrograms = get_posts(
                 array(
-                        'post_type' => 'program',
-                        'orderby' => 'title',
-                        'order' => 'ASC',
-                        'meta_query' => array(
-                            array('key' => 'external_id', 'value' => $value->id)
-                         )
+                    'post_type' => 'program',
+                    'orderby' => 'title',
+                    'order' => 'ASC',
+                    'meta_query' => array(
+                        array('key' => 'external_id', 'value' => $value->id)
                     )
+                )
             );
             if (count($existingPrograms) > 0) {
                 $finished[] = $existingPrograms[0]->ID;
+                $id = $existingPrograms[0]->ID;
                 $new[] = $existingPrograms[0]->ID;
+                $all[] = $existingPrograms[0]->ID;
+                update_post_meta($id, 'external_id', $value->id);
+                update_post_meta($id, 'mr_description', $value->bio);
+                update_post_meta($id, 'mr_presenters', $value->presenter_string);
+                update_post_meta($id, 'mr_slots', json_encode($value->slots));
             } else {
                 $id = wp_insert_post(array(
                     'post_title' => $value->name,
-                    'post_type'=>'program',
-                    'post_content'=>'testing',
+                    'post_type' => 'program',
+                    'post_name' => $value->slug,
+                    'post_content' => '[show_program slug="' . $value->slug . '"]',
                     'post_status' => 'publish',
-                    'post_excerpt' => $value->introduction
+                    'post_excerpt' => $value->introduction === null ? "" : $value->introduction
                 ));
                 add_post_meta($id, 'external_id', $value->id, true);
+                add_post_meta($id, 'mr_description', $value->bio, true);
+                add_post_meta($id, 'mr_presenters', $value->presenter_string, true);
+                add_post_meta($id, 'mr_slots', json_encode($value->slots), true);
                 $finished[] = $id;
-
+                $all[] = $id;
                 if ($value->image != null) {
-                    $att[] = $this->remote_image_as_featured_image($id, $value->image->url ) ;
+                    $pos = strpos($value->image->url, 'webp');
+                    $pos2 = strpos($value->image->url, 'svg');
+                    if ($pos !== false) {
+                    } else {
+                        if ($pos !== false) {
+                        } else {
+                            $att[] = $this->remote_image_as_featured_image($id, $value->image->url);
+                        }
+                    }
                 }
             }
         }
 
-        die(json_encode([$finished, $att, $new, $decoded]));
+        $redundant = get_posts(
+            array(
+                'post_type' => 'program',
+                'post__not_in' => $all,
+                'posts_per_page' => 500
+            )
+        );
+
+        foreach ($redundant as $key => $value) {
+            wp_delete_post($value->ID, false);
+        }
+
+        die(json_encode(['success' => true, "data" => $decoded, "junk" => [$finished, $att, $new, $decoded, $redundant, $all]]));
     }
-     
+
     public function remote_image_as_featured_image($post_id, $url, $attachment_data = array())
     {
         $download_remote_image = new Acw_Radio_Media($url, $attachment_data);
         $attachment_id         = $download_remote_image->download();
-  
-        if (! $attachment_id) {
+
+        if (!$attachment_id) {
             return false;
         }
-  
+
         return set_post_thumbnail($post_id, $attachment_id);
     }
 }
