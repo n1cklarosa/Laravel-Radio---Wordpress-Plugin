@@ -140,6 +140,8 @@ class Acw_Radio_Admin
             <input name="submit" class="button button-primary" type="submit" value="<?php esc_attr_e('Save'); ?>" />
         </form>
         <button style="margin-top:40px;" class='reload-programs button button-primar'>Reload Programs from API</button>
+        <div id="mrloading"></div>
+        <div id="mrresults"></div>
 <?php
     }
 
@@ -212,10 +214,13 @@ class Acw_Radio_Admin
             wp_send_json_error('Invalid security token sent.');
             die();
         }
+
         $settings = get_option('acw_plugin_options');
-        error_log($settings['api_key']);
-        $response = wp_remote_get('https://app.myradio.click/api/public/station/' . $settings['api_key']);
-        var_dump($response);
+        $response = wp_remote_get('https://app.myradio.click/api/public/station/' . $settings['api_key'], ['timeout' => 100]);
+        if (is_wp_error($response)) {
+            error_log("error fetching programs from api " . json_encode($response->errors));
+            wp_send_json_error('error fetching programs from api');
+        }
         $decoded = json_decode($response['body']);
         $progams = $decoded->data->programs;
         $finished = [];
@@ -283,7 +288,7 @@ class Acw_Radio_Admin
             wp_delete_post($value->ID, false);
         }
 
-        die(json_encode([$finished, $att, $new, $decoded, $redundant, $all]));
+        die(json_encode(['success' => true, "data" => $decoded, "junk" => [$finished, $att, $new, $decoded, $redundant, $all]]));
     }
 
     public function remote_image_as_featured_image($post_id, $url, $attachment_data = array())

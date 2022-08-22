@@ -44,7 +44,9 @@
       whatever: 1234,
       nonce: wp_ajax._nonce,
     };
-
+    const loadingDiv = document.getElementById("mrloading");
+    const resultsDiv = document.getElementById("mrresults");
+    loadingDiv.innerHTML = "<p>Loading..</p>";
     const data = new FormData();
     data.append("action", "prefix_ajax_first");
     data.append("_nonce", wp_ajax._nonce);
@@ -55,6 +57,18 @@
       body: data,
     });
     const results = await response.json();
+    console.log(results);
+    if (results.success === false) {
+      loadingDiv.innerHTML = `<p>An error has occures..${results.message}</p>`;
+      return;
+    }
+    loadingDiv.innerHTML =
+      "<p>Done! The following programs have been updated</p>";
+
+    results.data?.data?.programs?.forEach((element) => {
+      console.log(element);
+      resultsDiv.innerHTML = resultsDiv.innerHTML + `<p>${element.name}</p>`;
+    });
   };
 
   document.addEventListener(

@@ -26,7 +26,7 @@
  */
 
 // If this file is called directly, abort.
-if (! defined('WPINC')) {
+if (!defined('WPINC')) {
     die;
 }
 
@@ -34,11 +34,11 @@ define('MR_API_URL', 'https://app.myradio.click/api');
 define('MR_HLS_URL', 'https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration');
 define('MR_DATE_FORMAT', 'l, j F, Y');
 
-if (!defined('MR_REACT_PLAYER')):
+if (!defined('MR_REACT_PLAYER')) :
     define('MR_REACT_PLAYER', true);
 endif;
 
-if (!defined('MR_GRID_DROPDOWN')):
+if (!defined('MR_GRID_DROPDOWN')) :
     define('MR_GRID_DROPDOWN', false);
 endif;
 
@@ -98,8 +98,8 @@ run_acw_radio();
 
 function gutenberg_program_list_register_block()
 {
-    register_block_type(__DIR__ ."/blocks/program-list");
-    register_block_type(__DIR__ ."/blocks/episode-page");
+    register_block_type(__DIR__ . "/blocks/program-list");
+    register_block_type(__DIR__ . "/blocks/episode-page");
 }
 add_action('init', 'gutenberg_program_list_register_block');
 
@@ -112,7 +112,7 @@ add_action('init', 'gutenberg_program_list_register_block');
 // Load our styles from the css folder
 function plugin_mce_css($mce_css)
 {
-    if (! empty($mce_css)) {
+    if (!empty($mce_css)) {
         $mce_css .= ',';
     }
 
@@ -142,14 +142,14 @@ function add_code_before_content($content)
     global $mr_episode_data;
     $acuity_page = check_if_episodes_page();
     $settings = get_option('acw_plugin_options');
-    
+
     if (!$settings || !isset($settings['api_key'])) {
         return "Station Slug Not Set in config";
     }
 
-    if (defined('MR_HLS')):
+    if (defined('MR_HLS')) :
         $slug = MR_HLS;
-    else:
+    else :
         $slug = $settings['api_key'];
     endif;
     $var = '';
@@ -167,55 +167,54 @@ function add_code_before_content($content)
             } else {
                 return "No Episodes Found";
             } ?>
-				 <div class='latest-episodes'> 
-					 <?php
-                     $base_link = get_page_permalink_from_name("Episodes");
-            $offset =  isset($_GET['offset']) ? sanitize_text_field($_GET['offset']) : 1;
-            foreach ($episodes as $key => $ep) {
-                $image = $ep->program->image ? $ep->program->image->url : null;
-                $date = get_date_from_gmt(date('Y-m-d H:i:s', $ep->timestamp), MR_DATE_FORMAT) ; ?>
-						<div class="mr-episode-row"> 
-							<button class="mr-play-audio" 
-							<?php if ($image !==null):?> data-image="<?php echo $image; ?>" <?php endif; ?> 
-							data-title="<?php echo $ep->program->name . " ". $date; ?>" 
-							data-url="https://app.myradio.click/api/public/ondemand/<?php echo $slug; ?>/96/<?php echo $ep->timestamp; ?>/<?php echo $ep->duration; ?>/listen.m3u8?unique=website&source=website" aria-label="Play <?php echo $ep->readable; ?>">
-								
-							</button>
-                            <a href="<?php echo $base_link."?date=".$ep->timestamp; ?>"><p><?php echo $ep->program->name; ?></p><p><?php echo $ep->readable; ?></p></a>
-						</div>
-					 <?php
-            } ?>
-				 </div>
-				<?php if (($offset != '1') && ($offset != 1)) { ?>
-					 <a href="<?php echo $base_link."?offset=".($offset - 1); ?>">  Previous</a>
-				<?php } ?>
-			<?php if ($offset."" !== $results->meta->last_page.""): ?>
-				<a href="<?php echo $base_link."?offset=".($offset + 1); ?>">  Next</a>
-				<?php endif; ?>
-			<?php $var = ob_get_clean();
+            <div class='latest-episodes'>
+                <?php
+                $base_link = get_page_permalink_from_name("Episodes");
+                $offset =  isset($_GET['offset']) ? sanitize_text_field($_GET['offset']) : 1;
+                foreach ($episodes as $key => $ep) {
+                    $image = $ep->program->image ? $ep->program->image->url : null;
+                    $date = get_date_from_gmt(date('Y-m-d H:i:s', $ep->timestamp), MR_DATE_FORMAT); ?>
+                    <div class="mr-episode-row">
+                        <button class="mr-play-audio" <?php if ($image !== null) : ?> data-image="<?php echo $image; ?>" <?php endif; ?> data-title="<?php echo $ep->program->name . " " . $date; ?>" data-url="https://app.myradio.click/api/public/ondemand/<?php echo $slug; ?>/96/<?php echo $ep->timestamp; ?>/<?php echo $ep->duration; ?>/listen.m3u8?unique=website&source=website" aria-label="Play <?php echo $ep->readable; ?>">
+
+                        </button>
+                        <a href="<?php echo $base_link . "?date=" . $ep->timestamp; ?>">
+                            <p><?php echo $ep->program->name; ?></p>
+                            <p><?php echo $ep->readable; ?></p>
+                        </a>
+                    </div>
+                <?php
+                } ?>
+            </div>
+            <?php if (($offset != '1') && ($offset != 1)) { ?>
+                <a href="<?php echo $base_link . "?offset=" . ($offset - 1); ?>"> Previous</a>
+            <?php } ?>
+            <?php if ($offset . "" !== $results->meta->last_page . "") : ?>
+                <a href="<?php echo $base_link . "?offset=" . ($offset + 1); ?>"> Next</a>
+            <?php endif; ?>
+        <?php $var = ob_get_clean();
         } else {
             $ep = $mr_episode_data->data;
             ob_start();
             $image = $ep->program->image ? $ep->program->image->url : null;
-            $date = get_date_from_gmt(date('Y-m-d H:i:s', $ep->timestamp), MR_DATE_FORMAT) ;
+            $date = get_date_from_gmt(date('Y-m-d H:i:s', $ep->timestamp), MR_DATE_FORMAT);
             $currentTimestap = current_time('timestamp', true);
-            $readableName = $ep->program->name . " ". $date;
-         
-            // https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/2ser/aac_96/2022-03-13T10:00:00+11:00/1800/playlist.m3u8?unique=website
-            // var_dump($mr_episode_data);?>
+            $readableName = $ep->program->name . " " . $date;
 
-		<?php if ($currentTimestap >= $ep->timestamp) : ?>
-			<button class="mr-play-audio" data-title="<?php echo $readableName; ?>" 
-				<?php if ($image !==null):?> data-image="<?php echo $image; ?>" <?php endif; ?> 
-					data-url="<?php echo MR_HLS_URL."/".$ep->station->hls_stream."/aac_96/".$ep->local."/".$ep->duration."/playlist.m3u8?unique=website" ?>">Play!</button>
-		<?php endif; ?>
-		<div class="episode-details">
-			<?php foreach ($mr_episode_data->data->logs as $key => $log) {?>
-				<p><?php echo $log->artist; ?></p>
-			<?php } ?>
-		</div> 
-		<?php
-        $var = ob_get_clean();
+            // https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/2ser/aac_96/2022-03-13T10:00:00+11:00/1800/playlist.m3u8?unique=website
+            // var_dump($mr_episode_data);
+        ?>
+
+            <?php if ($currentTimestap >= $ep->timestamp) : ?>
+                <button class="mr-play-audio" data-title="<?php echo $readableName; ?>" <?php if ($image !== null) : ?> data-image="<?php echo $image; ?>" <?php endif; ?> data-url="<?php echo MR_HLS_URL . "/" . $ep->station->hls_stream . "/aac_96/" . $ep->local . "/" . $ep->duration . "/playlist.m3u8?unique=website" ?>">Play!</button>
+            <?php endif; ?>
+            <div class="episode-details">
+                <?php foreach ($mr_episode_data->data->logs as $key => $log) { ?>
+                    <p><?php echo $log->artist; ?></p>
+                <?php } ?>
+            </div>
+<?php
+            $var = ob_get_clean();
         }
         return $var;
     }
@@ -251,7 +250,7 @@ function change_title_for_episodes($query)
         if ($mr_episode_data !== false) {
             add_filter('the_title', function ($title, $id = null) use ($mr_episode_data) {
                 if ($title == 'Episodes') {
-                    return $mr_episode_data->data->program->name . " - ". get_date_from_gmt(date('Y-m-d H:i:s', $mr_episode_data->data->timestamp), MR_DATE_FORMAT) ;
+                    return $mr_episode_data->data->program->name . " - " . get_date_from_gmt(date('Y-m-d H:i:s', $mr_episode_data->data->timestamp), MR_DATE_FORMAT);
                 } else {
                     return $title;
                 }
@@ -266,7 +265,7 @@ function change_title_for_episodes($query)
         }
     }
 }
- 
+
 // This is the crux of it – we want to try hooking our function to the wp_title
 // filter as soon as your `slug` variable is set to the WP_Query; not all the way down in the template.
 add_action('parse_query', 'change_title_for_episodes');
@@ -280,10 +279,10 @@ function get_episode_data()
         if (!$settings || !isset($settings['api_key'])) {
             return false;
         }
- 
+        $body = "";
         $api_key = $settings['api_key'];
-        $response = wp_remote_get('https://app.myradio.click/api/public/station/'.$api_key.'/episode/'.$date);
-        if (is_array($response) && ! is_wp_error($response)) {
+        $response = wp_remote_get('https://app.myradio.click/api/public/station/' . $api_key . '/episode/' . $date);
+        if (is_array($response) && !is_wp_error($response)) {
             $headers = $response['headers']; // array of http header lines
             $body    = $response['body']; // use the content
         }
@@ -302,18 +301,18 @@ function get_latest_episodes()
         return false;
     }
     $api_key = $settings['api_key'];
-    $response = wp_remote_get('https://app.myradio.click/api/public/station/'.$api_key.'/recent?page='.$offset);
-    if (is_array($response) && ! is_wp_error($response)) {
+    $response = wp_remote_get('https://app.myradio.click/api/public/station/' . $api_key . '/recent?page=' . $offset);
+    if (is_array($response) && !is_wp_error($response)) {
         $headers = $response['headers']; // array of http header lines
         $body    = $response['body']; // use the content
     }
     return json_decode($body);
 }
 
-if (MR_REACT_PLAYER == true):
-        
+if (MR_REACT_PLAYER == true) :
+
     add_action('wp_body_open', 'wpdoc_add_custom_body_open_code');
-    
+
     function wpdoc_add_custom_body_open_code()
     {
         echo '<div class="mr-site-wrapper"><div class="mr-site-content-wrapper">';
