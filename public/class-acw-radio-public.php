@@ -75,9 +75,10 @@ class Acw_Radio_Public
          */
 
         wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/acw-radio-public.css', array(), $this->version, 'all');
-        if (MR_REACT_PLAYER == true):
-        wp_enqueue_style($this->plugin_name."-react", plugin_dir_url(__FILE__) . 'assets/css/main.chunk.css', array(), $this->version, 'all'); else:
-            wp_enqueue_style($this->plugin_name."-react-single", plugin_dir_url(__FILE__) . 'react/single_player/assets/css/main.chunk.css', array(), $this->version, 'all');
+        if (MR_REACT_PLAYER == true) :
+            wp_enqueue_style($this->plugin_name . "-react", plugin_dir_url(__FILE__) . 'assets/css/main.chunk.css', array(), $this->version, 'all');
+        else :
+            wp_enqueue_style($this->plugin_name . "-react-single", plugin_dir_url(__FILE__) . 'react/single_player/assets/css/main.chunk.css', array(), $this->version, 'all');
         endif;
     }
 
@@ -104,32 +105,35 @@ class Acw_Radio_Public
         $settings['offset'] = 6;
         $settings['react_or_not'] = MR_REACT_PLAYER == true ? true : false;
 
-        if ($post->post_type === 'program'):
+        if ($post->post_type === 'program') :
             wp_register_script('hls', plugin_dir_url(__FILE__) . 'js/vendor/hls.js', null, $this->version, true);
-        wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-public.js', array( 'jquery', 'hls' ), $this->version, true); else:
-            wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-public.js', array( 'jquery'  ), $this->version, true);
+            wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-public.js', array('jquery', 'hls'), $this->version, true);
+        else :
+            wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-public.js', array('jquery'), $this->version, true);
         endif;
-       
-        if (MR_REACT_PLAYER == true):
-            wp_register_script($this->plugin_name."-react-runtime", plugin_dir_url(__FILE__) . 'assets/js/runtime.js', null, $this->version, true);
-        wp_register_script($this->plugin_name."-react-main", plugin_dir_url(__FILE__) . 'assets/js/main.js', null, $this->version, true); else:
-            wp_register_script($this->plugin_name."-react-single-runtime", plugin_dir_url(__FILE__) . 'react/single_player/assets/js/runtime.js', null, $this->version, true);
-        wp_register_script($this->plugin_name."-react-single-main", plugin_dir_url(__FILE__) . 'react/single_player/assets/js/main.js', null, $this->version, true);
+
+        if (MR_REACT_PLAYER == true) :
+            wp_register_script($this->plugin_name . "-react-runtime", plugin_dir_url(__FILE__) . 'assets/js/runtime.js', null, $this->version, true);
+            wp_register_script($this->plugin_name . "-react-main", plugin_dir_url(__FILE__) . 'assets/js/main.js', null, $this->version, true);
+        else :
+            wp_register_script($this->plugin_name . "-react-single-runtime", plugin_dir_url(__FILE__) . 'react/single_player/assets/js/runtime.js', null, $this->version, true);
+            wp_register_script($this->plugin_name . "-react-single-main", plugin_dir_url(__FILE__) . 'react/single_player/assets/js/main.js', null, $this->version, true);
         endif;
         // wp_register_script($this->plugin_name."-react", plugin_dir_url(__FILE__) . 'assets/js/main.js', array( 'jquery' ), $this->version, true);
         $dataToBePassed = $settings;
         wp_localize_script($this->plugin_name, 'station_vars', $dataToBePassed);
-        if ($post->post_type === 'program'):
+        if ($post->post_type === 'program') :
             wp_enqueue_script('hls');
         endif;
         wp_enqueue_script($this->plugin_name);
-        if (MR_REACT_PLAYER == true):
-            wp_enqueue_script($this->plugin_name."-react-runtime");
-        wp_enqueue_script($this->plugin_name."-react-main"); else:
+        if (MR_REACT_PLAYER == true) :
+            wp_enqueue_script($this->plugin_name . "-react-runtime");
+            wp_enqueue_script($this->plugin_name . "-react-main");
+        else :
             if ($post) {
-                if ($post->ID == 16):
-                    wp_enqueue_script($this->plugin_name."-react-single-runtime");
-                wp_enqueue_script($this->plugin_name."-react-single-main");
+                if ($post->ID == 16) :
+                    wp_enqueue_script($this->plugin_name . "-react-single-runtime");
+                    wp_enqueue_script($this->plugin_name . "-react-single-main");
                 endif;
             }
         endif;
@@ -146,7 +150,7 @@ class Acw_Radio_Public
         <?php
     }
 
-     
+
     public function program_page_shortcode($atts)
     {
         global $post;
@@ -159,39 +163,40 @@ class Acw_Radio_Public
         );
         ob_start();
 
+        var_dump("$hello");
+        echo get_the_post_thumbnail($post->ID, 'large');
 
-	    echo get_the_post_thumbnail( $post->ID, 'large' );
- 
-        if (MR_REACT_PLAYER == true):
-            ?>
+        if (MR_REACT_PLAYER == true) :
+        ?>
             <?php
             $slots = get_post_meta(get_the_ID(), 'mr_slots', true);
             $presenters = get_post_meta(get_the_ID(), 'mr_presenters', true);
             $intro = get_post_meta(get_the_ID(), 'mr_description', true);
-            if ($presenters):
-                            echo "<p><strong>Presented By:</strong> $presenters</p>";
+            if ($presenters) :
+                echo "<p><strong>Presented By:</strong> $presenters</p>";
             endif;
-            if ($intro):
-                            echo wpautop($intro);
+            if ($intro) :
+                echo wpautop($intro);
             endif;
-            if ($slots):
-                            $slots = json_decode($slots);
-            foreach ($slots as $slot) {
-                if ($slot->readable->hours > 1) {
-                    $texzt = 's';
-                } else {
-                    $text = '';
+            if ($slots) :
+                $slots = json_decode($slots);
+                foreach ($slots as $slot) {
+                    if ($slot->readable->hours > 1) {
+                        $texzt = 's';
+                    } else {
+                        $text = '';
+                    }
+                    // var_dump($slot->readable);
+                    echo "<p>" . $slot->readable->time_start . " on " . $slot->readable->day_start . " for " . $slot->readable->hours . " hours" . $text . '</p>';
                 }
-                // var_dump($slot->readable);
-                echo "<p>".$slot->readable->time_start." on ".$slot->readable->day_start." for ".$slot->readable->hours. " hours".$text.'</p>';
-            }
             endif;
 
-            // the_content();?>
-                <div id="mrreactepisodes" data-slug="<?php echo $args['slug']; ?>"></div> 
-            <?php
-        else: ?> 
-            <div id="mrepisodes" data-slug="<?php echo $args['slug']; ?>"></div> 
+            // the_content();
+            ?>
+            <div id="mrreactepisodes" data-slug="<?php echo $args['slug']; ?>"></div>
+        <?php
+        else : ?>
+            <div id="mrepisodes" data-slug="<?php echo $args['slug']; ?>"></div>
         <?php endif;
 
         $var = ob_get_clean();
@@ -212,38 +217,40 @@ class Acw_Radio_Public
         ob_start();
         $cnt = 0;
         $weekday = date("w");
-            // var_dump($weekday);
-            
+        // var_dump($weekday);
+
         ?>
 
         <div id="program-list" class="program-list">
             <div class="program-list-wrapper">
                 <div class="days-list">
                     <ul class='weekday-toggles'>
-                    <?php foreach ($weekdays as $key => $value) { ?>
-                        <li><button class='weekday-toggle weekday-toggle<?php echo $key; ?>  <?php if ($weekday == $key) {
-            echo "active";
-        }?>' data-day="<?php echo $key; ?>"><?php echo $value; ?></button></li> 
-                    <?php $cnt++; } ?>
+                        <?php foreach ($weekdays as $key => $value) { ?>
+                            <li><button class='weekday-toggle weekday-toggle<?php echo $key; ?>  <?php if ($weekday == $key) {
+                                                                                                        echo "active";
+                                                                                                    } ?>' data-day="<?php echo $key; ?>"><?php echo $value; ?></button></li>
+                        <?php $cnt++;
+                        } ?>
                     </ul>
                 </div>
                 <div class="program-list-programs">
                     <?php foreach ($weekdays as $key => $value) { ?>
                         <div class="weekday-list <?php if ($weekday == $key) {
-            echo "active";
-        }?> weekday<?php echo $key; ?>"> </div> 
-                    <?php $cnt++; } ?>
+                                                        echo "active";
+                                                    } ?> weekday<?php echo $key; ?>"> </div>
+                    <?php $cnt++;
+                    } ?>
                 </div>
             </div>
         </div>
 
-		 <?php
+<?php
         $var = ob_get_clean();
- 
+
         return $var;
     }
 
-        
+
     public function shortcode_function($atts)
     {
         $args = shortcode_atts(
@@ -259,7 +266,7 @@ class Acw_Radio_Public
 
         $time_divs = "<div class='time-slots'> <div class='height_60'></div>";
 
-        for ($i=0; $i < 24; $i++) {
+        for ($i = 0; $i < 24; $i++) {
             $altered = $i - $offset;
             if ($altered < 0) {
                 $altered = $altered + 24;
@@ -278,29 +285,29 @@ class Acw_Radio_Public
 
         $weekDays = "";
 
-        for ($i=0; $i < 7; $i++) {
+        for ($i = 0; $i < 7; $i++) {
             $slot_divs = "<div class='slot-slots'>";
-            for ($j=0; $j < 24; $j++) {
-                $slot_divs = $slot_divs . "<div class='slot_slot height_30 ${i}_hour_".$j."_0'></div>";
-                $slot_divs = $slot_divs . "<div class='slot_slot height_30 ${i}_hour_".$j."_30'> </div>";
+            for ($j = 0; $j < 24; $j++) {
+                $slot_divs = $slot_divs . "<div class='slot_slot height_30 ${i}_hour_" . $j . "_0'></div>";
+                $slot_divs = $slot_divs . "<div class='slot_slot height_30 ${i}_hour_" . $j . "_30'> </div>";
             }
             $slot_divs = $slot_divs . "</div>";
 
-            $weekDays = $weekDays . "<div class='grid-weekday'><div class='weekday-heading height_60'>".$weekdays[$i]."</div><div class='weekday-container weekday_$i'>$slot_divs</div></div>";
+            $weekDays = $weekDays . "<div class='grid-weekday'><div class='weekday-heading height_60'>" . $weekdays[$i] . "</div><div class='weekday-container weekday_$i'>$slot_divs</div></div>";
         }
 
 
         $weekDaysMobile = "";
 
-        for ($i=0; $i < 7; $i++) {
-            $weekDaysMobile = $weekDaysMobile . "<div class='grid-weekday-mobile'><h3 class='mobile-weekday-header'>".$weekdays[$i]."</h3><div class='weekday-container mobile_weekday_$i'> </div></div>";
+        for ($i = 0; $i < 7; $i++) {
+            $weekDaysMobile = $weekDaysMobile . "<div class='grid-weekday-mobile'><h3 class='mobile-weekday-header'>" . $weekdays[$i] . "</h3><div class='weekday-container mobile_weekday_$i'> </div></div>";
         }
 
 
         $var = "<div class='programguide loading'><span class='load'>Loading Program Guide</span>
             <div class='desktop-program-grid'>
-            ".$time_divs."
-            ".$weekDays."
+            " . $time_divs . "
+            " . $weekDays . "
             </div>
             <div id='mobile-program-grid' class='mobile-program-grid'>$weekDaysMobile</div>
         </div>";
@@ -332,12 +339,12 @@ class Acw_Radio_Public
     {
 
         // Bail if this is not the main query.
-        if (! $query->is_main_query()) {
+        if (!$query->is_main_query()) {
             return;
         }
 
         // Bail if this query doesn't match our very specific rewrite rule.
-        if (! isset($query->query['page']) || 2 !== count($query->query)) {
+        if (!isset($query->query['page']) || 2 !== count($query->query)) {
             return;
         }
 
@@ -347,6 +354,6 @@ class Acw_Radio_Public
         }
 
         // Add CPT to the list of post types WP will include when it queries based on the post name.
-        $query->set('post_type', array( 'post', 'page', 'program' ));
+        $query->set('post_type', array('post', 'page', 'program'));
     }
 }
