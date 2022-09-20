@@ -118,7 +118,7 @@ class Acw_Radio_Public
         endif;
         $settings['react_or_not'] = MR_REACT_PLAYER == true ? true : false;
 
-        if ($post->post_type === 'program') :
+        if (($post) && ($post->post_type === 'program')) :
             wp_register_script('hls', plugin_dir_url(__FILE__) . 'js/vendor/hls.js', null, $this->version, true);
             wp_register_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/acw-radio-public.js', array('jquery', 'hls'), $this->version, true);
         else :
@@ -140,7 +140,7 @@ class Acw_Radio_Public
         // wp_register_script($this->plugin_name."-react", plugin_dir_url(__FILE__) . 'assets/js/main.js', array( 'jquery' ), $this->version, true);
         $dataToBePassed = $settings;
         wp_localize_script($this->plugin_name, 'station_vars', $dataToBePassed);
-        if ($post->post_type === 'program') :
+        if (($post) && ($post->post_type === 'program')) :
             wp_enqueue_script('hls');
         endif;
         wp_enqueue_script($this->plugin_name);

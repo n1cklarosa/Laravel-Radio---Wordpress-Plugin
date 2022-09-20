@@ -22,6 +22,23 @@ function load_audio(url, title, image = null) {
   });
 }
 
+window.addEventListener(
+  "message",
+  function (e) {
+    console.log("Got a message", e.data.eventName);
+    var eventName = e.data.eventName;
+    var data = e.data.frameHeight;
+    if (eventName) {
+      if (eventName === "mrprg") {
+        var elem = document.querySelector("#program-iframe");
+        console.log("Got here", elem, data);
+        elem.style.height = data + 80 + "px";
+      }
+    }
+  },
+  false
+);
+
 (function ($) {
   "use strict";
 })(jQuery);

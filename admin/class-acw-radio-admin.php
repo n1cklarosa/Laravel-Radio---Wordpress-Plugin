@@ -155,6 +155,7 @@ class Acw_Radio_Admin
         add_settings_field('acw_plugin_setting_icecast', 'Icecast URL', [$this, 'acw_plugin_setting_icecast'], 'acw_plugin', 'api_settings');
         add_settings_field('acw_plugin_setting_player', 'Show Player', [$this, 'acw_plugin_setting_player'], 'acw_plugin', 'api_settings');
         add_settings_field('acw_plugin_setting_pgstart', 'Grid Start Hour', [$this, 'acw_plugin_setting_pgstart'], 'acw_plugin', 'api_settings');
+        add_settings_field('acw_plugin_setting_program_type', 'Program Page Type', [$this, 'acw_plugin_setting_program_type'], 'acw_plugin', 'api_settings');
     }
 
     public function acw_plugin_options_validate($input)
@@ -221,6 +222,35 @@ class Acw_Radio_Admin
         <option value=\"no\" $no>No</option></select>";
     }
 
+    public function acw_plugin_setting_program_type()
+    {
+        $options = get_option('acw_plugin_options');
+
+        if (isset($options['program_type'])) :
+            if ($options['program_type'] == "local") {
+                $local = 'selected';
+                $iframe = "";
+                $js = "";
+            } elseif ($options['program_type'] == "iframe") {
+                $local = '';
+                $iframe = "selected";
+                $js = "";
+            } else {
+                $local = '';
+                $iframe = "";
+                $js = "selected";
+            }
+        else :
+            $local = '';
+            $iframe = "selected";
+            $js = "";
+        endif;
+        echo "<select id='acw_plugin_setting_program_type' name='acw_plugin_options[program_type]' type='text'  >
+        <option value=\"iframe\" $iframe>Iframe</option>
+        <option value=\"js\" $js>Imported Data</option>
+        <option value=\"local\" $local>Let me edit them</option></select>";
+    }
+
 
 
     public function ajax_first()
@@ -254,6 +284,7 @@ class Acw_Radio_Admin
         }
         $decoded = json_decode($response['body']);
         $progams = $decoded->data->programs;
+        $type = $settings['program_type'] ?: 'iframe';
         $finished = [];
         $new = [];
         $att = [];
@@ -269,6 +300,13 @@ class Acw_Radio_Admin
                     )
                 )
             );
+            $content = null;
+            if ($type == 'js') {
+                $content = '[show_program slug="' . $value->slug . '"]';
+            } elseif ($type == 'iframe') {
+                $content = '<iframe src="https://programpage.myradio.click?station=' . $settings['api_key'] . '&program=' . $value->id . '&name=false" class="mr-iframe" id="program-iframe" ></iframe>';
+            }
+
             if (count($existingPrograms) > 0) {
                 $finished[] = $existingPrograms[0]->ID;
                 $id = $existingPrograms[0]->ID;
@@ -278,15 +316,33 @@ class Acw_Radio_Admin
                 update_post_meta($id, 'mr_description', $value->bio);
                 update_post_meta($id, 'mr_presenters', $value->presenter_string);
                 update_post_meta($id, 'mr_slots', json_encode($value->slots));
+                if ($content != null) {
+                    $data = array(
+                        'ID' => $id,
+                        'post_content' => $content,
+                    );
+                    wp_update_post(
+                        $data
+                    );
+                }
             } else {
-                $id = wp_insert_post(array(
-                    'post_title' => $value->name,
-                    'post_type' => 'program',
-                    'post_name' => $value->slug,
-                    'post_content' => '[show_program slug="' . $value->slug . '"]',
-                    'post_status' => 'publish',
-                    'post_excerpt' => $value->introduction === null ? "" : $value->introduction
-                ));
+                if ($content !== null) {
+                    $id = wp_insert_post(array(
+                        'post_title' => $value->name,
+                        'post_type' => 'program',
+                        'post_name' => $value->slug,
+                        'post_content' => $content ?: "",
+                        'post_status' => 'publish',
+                        'post_excerpt' => $value->introduction === null ? "" : $value->introduction
+                    ));
+                } else {
+                    $id = wp_insert_post(array(
+                        'post_title' => $value->name,
+                        'post_type' => 'program',
+                        'post_name' => $value->slug,
+                        'post_status' => 'publish',
+                    ));
+                }
                 add_post_meta($id, 'external_id', $value->id, true);
                 add_post_meta($id, 'mr_description', $value->bio, true);
                 add_post_meta($id, 'mr_presenters', $value->presenter_string, true);

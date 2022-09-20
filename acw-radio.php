@@ -31,7 +31,7 @@ if (!defined('WPINC')) {
 }
 
 define('MR_API_URL', 'https://app.myradio.click/api');
-define('MR_HLS_URL', 'https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration');
+define('MR_HLS_URL', 'https://app.myradio.click/api/public/ondemand');
 define('MR_DATE_FORMAT', 'l, j F, Y');
 
 if (!defined('MR_REACT_PLAYER')) :
@@ -206,24 +206,48 @@ function add_code_before_content($content)
             <?php endif; ?>
         <?php $var = ob_get_clean();
         } else {
+            // This is when we have a single episode page.
             $ep = $mr_episode_data->data;
             ob_start();
-            $image = $ep->program->image ? $ep->program->image->url : null;
+            $image = $ep->image && $ep->image->webp ? $ep->image->webp->original : ($ep->program->image && $ep->program->image->webp ? $ep->program->image->webp->original : null);
             $date = get_date_from_gmt(date('Y-m-d H:i:s', $ep->timestamp), MR_DATE_FORMAT);
             $currentTimestap = current_time('timestamp', true);
             $readableName = $ep->program->name . " " . $date;
-
-            // https://hls-server.nicklarosa.net/public/endpoints/ondemand/duration/2ser/aac_96/2022-03-13T10:00:00+11:00/1800/playlist.m3u8?unique=website
-            // var_dump($mr_episode_data);
         ?>
-
-            <?php if ($currentTimestap >= $ep->timestamp) : ?>
-                <button class="mr-play-audio" data-title="<?php echo $readableName; ?>" <?php if ($image !== null) : ?> data-image="<?php echo $image; ?>" <?php endif; ?> data-url="<?php echo MR_HLS_URL . "/" . $ep->station->hls_stream . "/aac_96/" . $ep->local . "/" . $ep->duration . "/playlist.m3u8?unique=website" ?>">Play!</button>
-            <?php endif; ?>
+            <pre><?php var_dump($mr_episode_data);
+                    ?></pre>
             <div class="episode-details">
-                <?php foreach ($mr_episode_data->data->logs as $key => $log) { ?>
-                    <p><?php echo $log->artist; ?></p>
-                <?php } ?>
+                <?php if ($mr_episode_data->data->image && $mr_episode_data->data->image->webp) : ?><div class="mr-program-iamge"><img src='<?php echo $mr_episode_data->data->image->webp->original; ?>' alt="<?php echo $mr_episode_data->data->program->name; ?>" /> Here</div><?php endif; ?>
+                <?php if ($mr_episode_data->data->title) : ?><h2><?php echo $mr_episode_data->data->title; ?></h2><?php endif; ?>
+
+                <?php if ($mr_episode_data->data->program->presenter_string) : ?><div><span class="mr-presenter">Presenter By: </span><?php echo $mr_episode_data->data->program->presenter_string; ?></div><?php endif; ?>
+                <?php if ($currentTimestap >= $ep->timestamp && $using_player == true) : ?>
+                    <button class="mr-play-audio" data-title="<?php echo $readableName; ?>" <?php if ($image !== null) : ?> data-image="<?php echo $image; ?>" <?php endif; ?> data-url="<?php echo MR_HLS_URL . "/" . $ep->station->hls_stream . "/96/" . $ep->timestamp . "/" . $ep->duration . "/listen.m3u8?unique=website" ?>">Play!</button>
+                <?php endif; ?>
+                <?php if ($mr_episode_data->data->description) : ?><div><?php echo '<p>' . implode('</p><p>', array_filter(explode("\n", $mr_episode_data->data->description))) . '</p>'; ?></div><?php endif; ?>
+                <?php if (count($mr_episode_data->data->logs) > 0) : ?>
+                    <h3 class="mr-program-log-title">Episode Logs</h3>
+                    <ul>
+                        <?php foreach ($mr_episode_data->data->logs as $key => $log) { ?>
+                            <li class="mr-show-log">
+                                <?php
+                                if ($mr_episode_data->data->hide_times != 1) : ?>
+                                    <span class="mr-slog-time"><?php echo get_date_from_gmt(date(
+                                                                    'Y-m-d H:i:s',
+                                                                    $log->timestamp
+                                                                ), 'h:i a'); ?><br /></span>
+                                <?php endif; ?>
+                                <span class="mr-title"><?php echo $log->title; ?> </span> by
+                                <?php if ($log->artist) : ?>
+                                    <span class="mr-artist"><?php echo $log->artist; ?> </span>
+                                <?php endif; ?>
+                                <?php if ($log->album) : ?>
+                                    <span class="mr-release"><br>Release: <?php echo $log->album; ?> </span>
+                                <?php endif; ?>
+                            </li>
+                        <?php } ?>
+                    </ul>
+                <?php endif; ?>
             </div>
 <?php
             $var = ob_get_clean();
@@ -293,10 +317,18 @@ function get_episode_data()
         }
         $body = json_encode([]);
         $api_key = $settings['api_key'];
-        $response = wp_remote_get('https://app.myradio.click/api/public/station/' . $api_key . '/episode/' . $date);
+        $response = wp_remote_get('https://app.myradio.click/api/public/station/' . $api_key . '/episode/' . $date . "&hide_on_air=true");
         if (is_array($response) && !is_wp_error($response)) {
             $headers = $response['headers']; // array of http header lines
             $body    = $response['body']; // use the content
+        } else {
+        }
+        $results = json_decode($body);
+        if ($results->success == false) {
+            status_header(404);
+            nocache_headers();
+            include(get_query_template('404'));
+            die();
         }
         return json_decode($body);
     } else {

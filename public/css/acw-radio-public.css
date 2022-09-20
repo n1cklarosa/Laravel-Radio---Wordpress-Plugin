@@ -215,13 +215,15 @@
   text-decoration: none;
   text-align: center;
   font-size: 12px;
+  line-height: 1.2em;
+  overflow: hidden;
 }
 .programguide .desktop-program-grid .program_slot .grid-presenter {
   font-size: 10px;
 }
 @media screen and (min-width: 1200px) {
   .programguide .desktop-program-grid .program_slot {
-    font-size: 16px;
+    font-size: 12px;
   }
 }
 .programguide .desktop-program-grid .program_slot.onair {
@@ -430,6 +432,12 @@
 .page-id-16 .page-container {
   padding-top: 0 !important;
   width: 100% !important;
+}
+
+.mr-iframe {
+  width: 100%;
+  border: 0;
+  min-height: 80px;
 }
 
 /*# sourceMappingURL=acw-radio-public.css.map */
