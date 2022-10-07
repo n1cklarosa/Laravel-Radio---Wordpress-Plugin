@@ -281,19 +281,14 @@ class Acw_Radio_Public
             ),
             $atts
         );
-        $settings = get_option('acw_plugin_options');
-        if (isset($settings['pgstart'])) {
-            $offset = (int) $settings['pgstart'];
-        } else {
-            $offset = 6;
-        }
-
-
+        $offset = 6;
         $weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+
         $time_divs = "<div class='time-slots'> <div class='height_60'></div>";
 
         for ($i = 0; $i < 24; $i++) {
-            $altered = $i - (12 - $offset);
+            $altered = $i - $offset;
             if ($altered < 0) {
                 $altered = $altered + 24;
             }
@@ -330,20 +325,16 @@ class Acw_Radio_Public
         }
 
 
-        // $var = "<div class='programguide loading'><span class='load'>Loading Program Guide</span>
-        //     <div class='desktop-program-grid'>
-        //     " . $time_divs . "
-        //     " . $weekDays . "
-        //     </div>
-        //     <div id='mobile-program-grid' class='mobile-program-grid'>$weekDaysMobile</div>
-        // </div>";
-        $var = '<div id="mr-program-guide" class="programguide mr-loading">
-        <span class="load">Loading Program Guide</span>
-        <div class="desktop-program-grid"></div>
-        <div class="mobile-program-grid"></div>
-      </div>';
+        $var = "<div class='programguide loading'><span class='load'>Loading Program Guide</span>
+            <div class='desktop-program-grid'>
+            " . $time_divs . "
+            " . $weekDays . "
+            </div>
+            <div id='mobile-program-grid' class='mobile-program-grid'>$weekDaysMobile</div>
+        </div>";
         return $var;
     }
+
 
 
 

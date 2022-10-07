@@ -215,15 +215,13 @@
   text-decoration: none;
   text-align: center;
   font-size: 12px;
-  line-height: 1.2em;
-  overflow: hidden;
 }
 .programguide .desktop-program-grid .program_slot .grid-presenter {
   font-size: 10px;
 }
 @media screen and (min-width: 1200px) {
   .programguide .desktop-program-grid .program_slot {
-    font-size: 12px;
+    font-size: 16px;
   }
 }
 .programguide .desktop-program-grid .program_slot.onair {
@@ -232,10 +230,10 @@
 .programguide .desktop-program-grid .program_slot:hover {
   background-color: #eeeeee;
 }
-.programguide.mr-loading .mobile-program-grid {
+.programguide.loading .mobile-program-grid {
   display: none;
 }
-.programguide.mr-loading .desktop-program-grid {
+.programguide.loading .desktop-program-grid {
   display: none;
 }
 
@@ -261,8 +259,8 @@
   display: none;
 }
 
-.programguide.mr-loading span.load,
-.onairnow.mr-loading span.load {
+.programguide.loading span.load,
+.onairnow.loading span.load {
   display: flex;
 }
 

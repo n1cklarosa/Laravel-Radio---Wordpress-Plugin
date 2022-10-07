@@ -13,9 +13,9 @@
  * @package           Acw_Radio
  *
  * @wordpress-plugin
- * Plugin Name:       All Class Web Radio Functions
+ * Plugin Name:       MyRadio.CLick Functions
  * Plugin URI:        https://allclassweb.com
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Description:       A bespoke plugin to integrate myradio.click into any wordpress based website.
  * Version:           1.0.16
  * Author:            Nick La Rosa
  * Author URI:        https://allclassweb.com
@@ -214,13 +214,14 @@ function add_code_before_content($content)
             $currentTimestap = current_time('timestamp', true);
             $readableName = $ep->program->name . " " . $date;
         ?>
-            <pre><?php var_dump($mr_episode_data);
-                    ?></pre>
+            <!-- <pre><?php //var_dump($mr_episode_data);
+                        ?></pre> -->
             <div class="episode-details">
+                <div class="mr-episode-program"><a href="/<?php echo $mr_episode_data->data->program->slug; ?>">PROGRAM PAGE</a></div>
                 <?php if ($mr_episode_data->data->image && $mr_episode_data->data->image->webp) : ?><div class="mr-program-iamge"><img src='<?php echo $mr_episode_data->data->image->webp->original; ?>' alt="<?php echo $mr_episode_data->data->program->name; ?>" /> Here</div><?php endif; ?>
                 <?php if ($mr_episode_data->data->title) : ?><h2><?php echo $mr_episode_data->data->title; ?></h2><?php endif; ?>
 
-                <?php if ($mr_episode_data->data->program->presenter_string) : ?><div><span class="mr-presenter">Presenter By: </span><?php echo $mr_episode_data->data->program->presenter_string; ?></div><?php endif; ?>
+                <?php if ($mr_episode_data->data->program->presenter_string) : ?><div><span class="mr-presenter">Presented By: </span><?php echo $mr_episode_data->data->program->presenter_string; ?></div><?php endif; ?>
                 <?php if ($currentTimestap >= $ep->timestamp && $using_player == true) : ?>
                     <button class="mr-play-audio" data-title="<?php echo $readableName; ?>" <?php if ($image !== null) : ?> data-image="<?php echo $image; ?>" <?php endif; ?> data-url="<?php echo MR_HLS_URL . "/" . $ep->station->hls_stream . "/96/" . $ep->timestamp . "/" . $ep->duration . "/listen.m3u8?unique=website" ?>">Play!</button>
                 <?php endif; ?>

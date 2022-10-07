@@ -78,13 +78,11 @@ $halfhourheight: 32px !default;
       text-decoration: none;
       text-align: center;
       font-size: 12px;
-      line-height: 1.2em;
-      overflow: hidden;
       .grid-presenter {
         font-size: 10px;
       }
       @media screen and (min-width: 1200px) {
-        font-size: 12px;
+        font-size: 16px;
       }
       &.onair {
         background-color: #eeeeee;
@@ -95,7 +93,7 @@ $halfhourheight: 32px !default;
       }
     }
   }
-  &.mr-loading {
+  &.loading {
     .mobile-program-grid {
       display: none;
     }
@@ -127,8 +125,8 @@ $halfhourheight: 32px !default;
   display: none;
 }
 
-.programguide.mr-loading span.load,
-.onairnow.mr-loading span.load {
+.programguide.loading span.load,
+.onairnow.loading span.load {
   display: flex;
 }
 
